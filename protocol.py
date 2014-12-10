@@ -68,9 +68,9 @@ def parse_init(message):
     True
     """
     struct = REGEX_GENERAL_INIT.match(message).groupdict()
-    cells = [REGEX_CELL.match(s + 'I').groupdict()
+    cells = [REGEX_CELL_INIT.match(s + 'I').groupdict()
             for s in struct['cells'][:-1].split('I,')]
-    lines = [REGEX_LINE.match(s).groupdict()
+    lines = [REGEX_LINE_INIT.match(s).groupdict()
              for s in struct['lines'].split(',')]
     struct['cells'] = cells
     struct['lines'] = lines
