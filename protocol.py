@@ -1,4 +1,5 @@
 import re
+import itertools
 
 REGEX_GENERAL_INIT = re.compile(r"""INIT
                                     (?P<matchid>[0-9a-f\-]+)  # UUID du match
@@ -18,32 +19,62 @@ REGEX_GENERAL_INIT = re.compile(r"""INIT
                                     """,
                                 re.VERBOSE)
 
-REGEX_CELL = re.compile(r"""(?P<cellid>\d+)
-                            \(
-                            (?P<x>\d+),(?P<y>\d+)
-                            \)
-                            '
-                            (?P<radius>\d+)
-                            '
-                            (?P<offsize>\d+)
-                            '
-                            (?P<defsize>\d+)
-                            '
-                            (?P<prod>I+)
-                             """,
-                        re.VERBOSE)
+REGEX_CELL_INIT = re.compile(r"""(?P<cellid>\d+)
+                                 \(
+                                 (?P<x>\d+),(?P<y>\d+)
+                                 \)
+                                 '
+                                 (?P<radius>\d+)
+                                 '
+                                 (?P<offsize>\d+)
+                                 '
+                                 (?P<defsize>\d+)
+                                 '
+                                 (?P<prod>I+)
+                                 """,
+                             re.VERBOSE)
 
-REGEX_LINE = re.compile(r"""(?P<cellid1>\d+)
-                            @
-                            (?P<dist>\d+)
-                            OF
-                            (?P<cellid2>\d+)
-                            """,
-                        re.VERBOSE)
+REGEX_LINE_INIT = re.compile(r"""(?P<cellid1>\d+)
+                                 @
+                                 (?P<dist>\d+)
+                                 OF
+                                 (?P<cellid2>\d+)
+                                 """,
+                             re.VERBOSE)
 
-REGEX_GENERAL_STATE = re.compile(r"""
+REGEX_GENERAL_STATE = re.compile(r"""STATE
+                                     (?P<matchid>[0-9a-f\-]+)  # UUID du match
+                                     IS
+                                     (?P<nb_players>\d+)
+                                     ;
+                                     (?P<nb_cells>\d+)
+                                     CELLS
+                                     (:(?P<cells>.*))?
+                                     ;
+                                     (?P<nb_moves>\d+)
+                                     MOVES
+                                     (:(?P<moves>.*))?
                                      """,
                                  re.VERBOSE)
+
+REGEX_CELL_STATE = re.compile(r"""(?P<cellid>\d+)
+                                  \[
+                                  (?P<owner>\d+)
+                                  \]
+                                  (?P<offunit>\d+)
+                                  '
+                                  (?P<defunit>\d+)
+                                  """,
+                              re.VERBOSE)
+
+REGEX_MOVE_STATE = re.compile(r"""(?P<direction>\<|\>)
+                                  (?P<units>\d+)
+                                  \[
+                                  (?P<owner>\d+)
+                                  \]
+                                  @
+                                  (?P<timestamp>\d+)""",
+                              re.VERBOSE)
 
 EXAMPLE_INIT = r"INIT20ac18ab-6d18-450e-94af-bee53fdc8fcaTO6[2];1;3CELLS:1(23,9)'2'30'8'I,2(41,55)'1'30'8'II,3(23,103)'1'20'5'I;2LINES:1@3433OF2,1@6502OF3"
 EXAMPLE_STATE = r"STATE20ac18ab-6d18-450e-94af-bee53fdc8fcaIS2;3CELLS:1[2]12'4,2[2]15'2,3[1]33'6;4MOVES:1<5[2]@232'>6[2]@488'>3[1]@4330'2,1<10[1]@2241'3"
@@ -77,11 +108,53 @@ def parse_init(message):
     return struct
 
 def parse_state(message):
-    #TODO : écrire la fonction !
-    pass
+    """Parse le message suivant le protocole donné.
+
+    >>> parse_state(EXAMPLE_STATE) == \
+                {'moves': [{'to': '1',\
+                   'owner': '2',\
+                   'from': '2',\
+                   'units': '5',\
+                   'timestamp': '232'},\
+                  {'to': '2', 'owner': '2', 'from': '1', 'units': '6', 'timestamp': '488'},\
+                  {'to': '2', 'owner': '1', 'from': '1', 'units': '3', 'timestamp': '4330'},\
+                  {'to': '1', 'owner': '1', 'from': '3', 'units': '10', 'timestamp': '2241'}],\
+                 'nb_cells': '3',\
+                 'nb_moves': '4',\
+                 'nb_players': '2',\
+                 'cells': [{'defunit': '4', 'owner': '2', 'offunit': '12', 'cellid': '1'},\
+                  {'defunit': '2', 'owner': '2', 'offunit': '15', 'cellid': '2'},\
+                  {'defunit': '6', 'owner': '1', 'offunit': '33', 'cellid': '3'}],\
+                 'matchid': '20ac18ab-6d18-450e-94af-bee53fdc8fca'}
+    True
+    """
+    struct = REGEX_GENERAL_STATE.match(message).groupdict()
+    cells = [REGEX_CELL_STATE.match(s).groupdict()
+             for s in struct['cells'].split(',')]
+    moves = struct['moves'].split(',')
+    # l'itertool est là pour transformer [[x]] en [x]
+    moves = list(itertools.chain(*[_parse_moves(move) for move in moves]))
+    struct['cells'] = cells
+    struct['moves'] = moves
+    return struct
+
+def _parse_moves(moves):
+    (left, moves, right) = re.match(r"(\d+)(.*)(\d+)", moves).groups()
+    moves = [REGEX_MOVE_STATE.match(s).groupdict()
+             for s in moves.split("'")
+             if s]
+    for move in moves:
+        if move['direction'] == '>':
+            move['from'] = left
+            move['to'] = right
+        else:
+            move['from'] = right
+            move['to'] = left
+        del move['direction']
+    return moves
 
 def encode_order(user_id, order):
-    """Encode l'ordre suivant le protocole donné.
+    """Encode l'ordre de déplacement suivant le protocole donné.
 
     >>> encode_order("0947e717-02a1-4d83-9470-a941b6e8ed07", {'from': 1, 'to': 4,\
                                                               'percent': 33})
