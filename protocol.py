@@ -59,7 +59,7 @@ def parse_init(message):
                     'radius': '1', 'cellid': '2', 'offsize': '30', 'prod':\
                     'II',\
                     'defsize': '8'}, {'x': '23', 'y': '103', 'radius': '1',\
-                        'cellid': '3', 'offsize': '20', 'prod': 'II',\
+                        'cellid': '3', 'offsize': '20', 'prod': 'I',\
                         'defsize':\
                         '5'}], 'speed': '1', 'id_us': '2', 'nb_lines': '2',\
                     'nb_cells': '3', 'lines': [{'cellid2': '2', 'dist': '3433',\
@@ -69,7 +69,7 @@ def parse_init(message):
     """
     struct = REGEX_GENERAL_INIT.match(message).groupdict()
     cells = [REGEX_CELL.match(s + 'I').groupdict()
-             for s in struct['cells'].split('I,')]
+            for s in struct['cells'][:-1].split('I,')]
     lines = [REGEX_LINE.match(s).groupdict()
              for s in struct['lines'].split(',')]
     struct['cells'] = cells
