@@ -1,0 +1,21 @@
+Cellules :
+
+    liste des (voisin, distance)
+    candence de production d'unités
+    nb unités offencives
+    + max
+    nb unités deffensives
+    + max
+    owner
+    liste des mouvements en direction de cette cellule :
+        - temps avant arrivée
+        - nb unités
+        - owner
+
+
+Match :
+    match id
+    liste des cellules
+    qui on est
+    nb joueurs
+    timestamp depuis le début
