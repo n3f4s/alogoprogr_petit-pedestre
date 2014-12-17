@@ -3,7 +3,7 @@ from cell import Cell
 class Match:
     def __init__(self, init):
         self.id = init['matchid']
-        self.cells = [Cell(cell) for cell in init['cells']]
+        self.cells = {cell['cellid']: Cell(cell) for cell in init['cells']}
         self.nb_players = init['nb_players']
         self.me = init['id_us']
         self.speed = init['speed']

@@ -25,7 +25,8 @@ import inspect
 
 # string
 UUID = None
-CURRENT_MATCH = None
+# { matchid: Match
+MATCHES = {}
 
 def register_pooo(uid):
     """Inscrit un joueur et initialise le robot pour la compétition
@@ -64,9 +65,9 @@ def init_pooo(init_string):
 
     "INIT20ac18ab-6d18-450e-94af-bee53fdc8fcaTO6[2];1;3CELLS:1(23,9)'2'30'8'I,2(41,55)'1'30'8'II,3(23,103)'1'20'5'I;2LINES:1@3433OF2,1@6502OF3"
     """
-    global CURRENT_MATCH
+    global MATCHES
     init = protocol.parse_init(init_string)
-    CURRENT_MATCH = match.Match(init)
+    MATCHES[init['matchid']] = match.Match(init)
 
 
 
@@ -74,14 +75,16 @@ def play_pooo():
     """Active le robot-joueur
 
     """
-    global CURRENT_MATCH
+    global MATCHES
     logging.info('Entering play_pooo fonction from {} module...'.format(inspect.currentframe().f_back.f_code.co_filename))
 
     while True:
         new_state = poooc.state_on_update()
         new_state = protocol.parse_state(new_state)
-        CURRENT_MATCH.update(new_state)
-        orders = CURRENT_MATCH.compute_strategy()
-        for order in orders:
-            order = protocol.encode_order(UUID, order)
-            poooc.order(order)
+        if new_state['matchid'] in MATCHES:
+            current_match = MATCHES[new_state['matchid']]
+            current_match.update(new_state)
+            orders = current_match.compute_strategy()
+            for order in orders:
+                order = protocol.encode_order(UUID, order)
+                poooc.order(order)
