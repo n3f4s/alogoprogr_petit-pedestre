@@ -1,3 +1,5 @@
+from cell import Cell
+
 class Match:
     def __init__(self, init):
         self.id = init['matchid']
@@ -8,7 +10,9 @@ class Match:
         # TODO : lines
 
     def update(self, state):
-        pass
+        # TODO : moves
+        for cell in state['cells']:
+            self.cells[cell['cellid']].update(cell)
 
     def compute_strategy(self):
         pass

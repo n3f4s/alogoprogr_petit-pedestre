@@ -8,3 +8,8 @@ class Cell:
         self.nb_def = 0
         self.owner = None
         self.moves = []
+
+    def update(self, state):
+        self.owner = state['owner']
+        self.nb_def = state['defunit']
+        self.nb_off = state['offunit']
