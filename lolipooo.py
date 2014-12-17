@@ -26,7 +26,7 @@ import inspect
 # string
 UUID = None
 # { matchid: Match
-MATCHES = {}
+MATCHS = {}
 
 def register_pooo(uid):
     """Inscrit un joueur et initialise le robot pour la compétition
