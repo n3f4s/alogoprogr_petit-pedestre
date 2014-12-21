@@ -1,3 +1,5 @@
+""" Module chargé de parser et encoder les communications avec le serveur. """
+
 import re
 import itertools
 
