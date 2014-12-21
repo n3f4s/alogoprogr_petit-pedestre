@@ -75,15 +75,36 @@ REGEX_MOVE_STATE = re.compile(r"""(?P<direction>\<|\>)
                                   (?P<owner>\d+)
                                   \]
                                   @
-                                  (?P<timestamp>\d+)""",
+                                  (?P<timestamp>\d+)
+                                  """,
                               re.VERBOSE)
+
+REGEX_GAMEOVER = re.compile(r"""GAMEOVER
+                                \[
+                                (?P<winner>\d+)
+                                \]
+                                IN
+                                (?P<matchid>[0-9a-f\-]+)
+                                """,
+                            re.VERBOSE)
+
+REGEX_ENDOFGAME = re.compile(r"""ENDOFGAME
+                                 (?P<matchid>[0-9a-f\-]+)
+                                 """,
+                             re.VERBOSE)
 
 EXAMPLE_INIT = r"INIT20ac18ab-6d18-450e-94af-bee53fdc8fcaTO6[2];1;3CELLS:1(23,9)'2'30'8'I,2(41,55)'1'30'8'II,3(23,103)'1'20'5'I;2LINES:1@3433OF2,1@6502OF3"
 EXAMPLE_STATE = r"STATE20ac18ab-6d18-450e-94af-bee53fdc8fcaIS2;3CELLS:1[2]12'4,2[2]15'2,3[1]33'6;4MOVES:1<5[2]@232'>6[2]@488'>3[1]@4330'2,1<10[1]@2241'3"
 EXAMPLE_ORDER = r"[0947e717-02a1-4d83-9470-a941b6e8ed07]MOV33FROM1TO4"
+EXAMPLE_GAMEOVER = r"GAMEOVER[2]IN20ac18ab-6d18-450e-94af-bee53fdc8fca"
+EXAMPLE_ENDOFGAME = r"ENDOFGAME20ac18ab-6d18-450e-94af-bee53fdc8fca"
+
+def parse_register(message):
+    """ Retourne l'UUID du joueur."""
+    return message[3:]
 
 def parse_init(message):
-    """Parse le message suivant le protocole donné.
+    """ Parse le message suivant le protocole donné.
 
     >>> parse_init(EXAMPLE_INIT) == {'matchid':\
             '20ac18ab-6d18-450e-94af-bee53fdc8fca', 'nb_players': '6', 'cells':\
@@ -110,7 +131,7 @@ def parse_init(message):
     return struct
 
 def parse_state(message):
-    """Parse le message suivant le protocole donné.
+    """ Parse le message suivant le protocole donné.
 
     >>> parse_state(EXAMPLE_STATE) == \
                 {'moves': [{'to': '1',\
@@ -127,7 +148,7 @@ def parse_state(message):
                  'cells': [{'defunit': '4', 'owner': '2', 'offunit': '12', 'cellid': '1'},\
                   {'defunit': '2', 'owner': '2', 'offunit': '15', 'cellid': '2'},\
                   {'defunit': '6', 'owner': '1', 'offunit': '33', 'cellid': '3'}],\
-                 'matchid': '20ac18ab-6d18-450e-94af-bee53fdc8fca'}
+                  'matchid': '20ac18ab-6d18-450e-94af-bee53fdc8fca', 'type': 'state'}
     True
     """
     struct = REGEX_GENERAL_STATE.match(message).groupdict()
@@ -138,6 +159,7 @@ def parse_state(message):
     moves = list(itertools.chain(*[_parse_moves(move) for move in moves]))
     struct['cells'] = cells
     struct['moves'] = moves
+    struct['type'] = 'state'
     return struct
 
 def _parse_moves(moves):
@@ -156,13 +178,35 @@ def _parse_moves(moves):
     return moves
 
 def encode_order(user_id, order):
-    """Encode l'ordre de déplacement suivant le protocole donné.
+    """ Encode l'ordre de déplacement suivant le protocole donné.
 
     >>> encode_order("0947e717-02a1-4d83-9470-a941b6e8ed07", {'from': 1, 'to': 4,\
                                                               'percent': 33})
     '[0947e717-02a1-4d83-9470-a941b6e8ed07]MOV33FROM1TO4'
     """
     return "[{user_id}]MOV{percent}FROM{from}TO{to}".format(user_id=user_id, **order)
+
+def parse_gameover(message):
+    """ Parse un message de gameover.
+
+    >>> parse_gameover(EXAMPLE_GAMEOVER) == {'type': 'gameover', 'winner': '2',\
+            'matchid': '20ac18ab-6d18-450e-94af-bee53fdc8fca'}
+    True
+    """
+    struct = REGEX_GAMEOVER.match(message).groupdict()
+    struct['type'] = 'gameover'
+    return struct
+
+def parse_endofgame(message):
+    """ Parse un message de gameover.
+
+    >>> parse_endofgame(EXAMPLE_ENDOFGAME) == {'type': 'endofgame', 'matchid':\
+            '20ac18ab-6d18-450e-94af-bee53fdc8fca'}
+    True
+    """
+    struct = REGEX_ENDOFGAME.match(message).groupdict()
+    struct['type'] = 'endofgame'
+    return struct
 
 
 if __name__ == "__main__":

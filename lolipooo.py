@@ -26,7 +26,7 @@ import inspect
 # string
 UUID = None
 # { matchid: Match
-MATCHS = {}
+MATCHES = {}
 
 def register_pooo(uid):
     """Inscrit un joueur et initialise le robot pour la compétition
@@ -39,7 +39,7 @@ def register_pooo(uid):
     "0947e717-02a1-4d83-9470-a941b6e8ed07"
     """
     global UUID
-    UUID = uid
+    UUID = protocol.parse_register(uid)
 
 
 def init_pooo(init_string):
@@ -84,10 +84,14 @@ def play_pooo():
         new_state = protocol.parse_state(new_state)
         # Si le match est en cours, on le met à jour puis on récupère la
         # stratégie à adopter qu'on encode et envoie.
-        if new_state['matchid'] in MATCHES:
-            current_match = MATCHES[new_state['matchid']]
-            current_match.update(new_state)
-            orders = current_match.compute_strategy()
-            for order in orders:
-                order = protocol.encode_order(UUID, order)
-                poooc.order(order)
+        with new_state['matchid'] as matchid:
+            if matchid in MATCHES:
+                if new_state['type'] in ('gameover', 'endofgame'):
+                    del MATCHES[matchid]
+                else:
+                    current_match = MATCHES[matchid]
+                    current_match.update(new_state)
+                    orders = current_match.compute_strategy()
+                    for order in orders:
+                        order = protocol.encode_order(UUID, order)
+                        poooc.order(order)
