@@ -1,4 +1,5 @@
 from cell import Cell
+import strategy
 
 class Match:
     """ Modélise un match en cours.
@@ -12,12 +13,13 @@ class Match:
         speed :: int            Vitesse de jeu
     """
 
-    def __init__(self, init):
+    def __init__(self, init, strat=strategy.dummy):
         self.id = init['matchid']
         self.cells = {cell['cellid']: Cell(cell, init['lines']) for cell in init['cells']}
         self.nb_players = init['nb_players']
         self.me = init['id_us']
         self.speed = init['speed']
+        self.strategy = strat
 
     def update(self, state):
         """ Met à jour les cellules avec le nouvel état."""
@@ -32,4 +34,4 @@ class Match:
                             'from', 'to', 'percent'. Voir protocol.encode_order
                             pour plus de détails
         """
-        pass
+        return self.strategy(self)
