@@ -67,6 +67,10 @@ def _strat_base(match):
 			orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
 
+def time_remaining_per_cent(match, mvt, dest):
+	total_time = match.cells[mvt.source].links[dest.id]
+	return (mvt.time_remaining/total_time)/100
+
 
 def _strat_base2(match):
 	"""Strat de base amélioré
@@ -84,7 +88,7 @@ def _strat_base2(match):
 				if mvt.owner != cell.owner:
 					if cell.id != mvt.source:
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
-					elif time_remaining_per_cent(mvt)<50:
+					elif time_remaining_per_cent(match, mvt, weakest)<50:
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 				else:
 					as_incomming = False
@@ -93,7 +97,7 @@ def _strat_base2(match):
 							as_incomming = True
 					if not as_incomming and cell.id != mvt.source:
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
-					elif not as_incomming and time_remaining_per_cent(mvt)<50:
+					elif not as_incomming and time_remaining_per_cent(match, mvt, weakest)<50:
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
 
