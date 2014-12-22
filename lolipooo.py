@@ -49,17 +49,17 @@ def init_pooo(init_string):
     :type init_string: chaîne de caractères (utf-8 string)
 
 
-   INIT<matchid>TO<#players>[<me>];<speed>;\
-   <#cells>CELLS:<cellid>(<x>,<y>)'<radius>'<offsize>'<defsize>'<prod>,...;\
-   <#lines>LINES:<cellid>@<dist>OF<cellid>,...
+    INIT<matchid>TO<#players>[<me>];<speed>;\
+    <#cells>CELLS:<cellid>(<x>,<y>)'<radius>'<offsize>'<defsize>'<prod>,...;\
+    <#lines>LINES:<cellid>@<dist>OF<cellid>,...
 
-   <me> et <owner> désignent des numéros de 'couleur' attribués aux joueurs. La couleur 0 est le neutre.
-   le neutre n'est pas compté dans l'effectif de joueurs (<#players>).
-   '...' signifie que l'on répète la séquence précédente autant de fois qu'il y a de cellules (ou d'arêtes).
-   0CELLS ou 0LINES sont des cas particuliers sans suffixe.
-   <dist> est la distance qui sépare 2 cellules, exprimée en... millisecondes !
-   /!\ attention: un match à vitesse x2 réduit de moitié le temps effectif de trajet d'une cellule à l'autre par rapport à l'indication <dist>.
-   De manière générale temps_de_trajet=<dist>/vitesse (division entière).
+    <me> et <owner> désignent des numéros de 'couleur' attribués aux joueurs. La couleur 0 est le neutre.
+    le neutre n'est pas compté dans l'effectif de joueurs (<#players>).
+    '...' signifie que l'on répète la séquence précédente autant de fois qu'il y a de cellules (ou d'arêtes).
+    0CELLS ou 0LINES sont des cas particuliers sans suffixe.
+    <dist> est la distance qui sépare 2 cellules, exprimée en... millisecondes !
+    /!\ attention: un match à vitesse x2 réduit de moitié le temps effectif de trajet d'une cellule à l'autre par rapport à l'indication <dist>.
+    De manière générale temps_de_trajet=<dist>/vitesse (division entière).
 
     :Example:
 
@@ -79,8 +79,11 @@ def play_pooo():
     logging.info('Entering play_pooo fonction from {} module...'.format(inspect.currentframe().f_back.f_code.co_filename))
 
     while True:
+        # On récupère et parse le nouvel état reçu.
         new_state = poooc.state_on_update()
         new_state = protocol.parse_state(new_state)
+        # Si le match est en cours, on le met à jour puis on récupère la
+        # stratégie à adopter qu'on encode et envoie.
         if new_state['matchid'] in MATCHES:
             current_match = MATCHES[new_state['matchid']]
             current_match.update(new_state)
