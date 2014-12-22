@@ -58,6 +58,8 @@ def strategy(match, strat):
 	return list_strat[strat](match)
 
 def _strat_base(match):
+	"""Strat de base : atttaque l'enemi adjacent le plus faible ou aide l'allié adjacent le plus faible
+	"""
 	orders = []
 	for cell in match.cells:
 		if cell.owner == match.me:
@@ -67,13 +69,31 @@ def _strat_base(match):
 
 
 def _strat_base2(match):
+	"""Strat de base amélioré
+
+	N'attaque que si il n'y a pas de mouvement vers la cible ou si les unités attaquants la cible sont à plus de la moitié du trajet.
+	Si la cible est allié et qu'elle envoie des unités, alors on ne lui envoie rien
+	"""
 	orders = []
 	for cell in match.cells:
 		if cell.owner == match.me:
 			weakest = weakest_neighbour_foe(cell, match)
 			if weakest == None:
 				weakest = weakest_neighbour_friend(cell, match)
-			if #si elles sont pas ds les mv
-			orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
+			for mvt in weakest.moves:
+				if mvt.owner != cell.owner:
+					if cell.id != mvt.source:
+						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
+					elif time_remaining_per_cent(mvt)<50:
+						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
+				else:
+					as_incomming = False
+					for mvt in cell.moves:
+						if mvt.source.id == weakest.id:
+							as_incomming = True
+					if not as_incomming and cell.id != mvt.source:
+						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
+					elif not as_incomming and time_remaining_per_cent(mvt)<50:
+						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
 
