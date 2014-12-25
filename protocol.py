@@ -2,6 +2,9 @@
 
 import re
 import itertools
+import logging
+
+LOGGER = logging.getLogger('parsing')
 
 REGEX_GENERAL_INIT = re.compile(r"""INIT
                                     (?P<matchid>[0-9a-f\-]+)  # UUID du match
@@ -121,6 +124,7 @@ def parse_init(message):
                             'cellid1': '1'}]}
     True
     """
+    LOGGER.debug('Reçu  :' + message)
     struct = REGEX_GENERAL_INIT.match(message).groupdict()
     cells = [REGEX_CELL_INIT.match(s + 'I').groupdict()
             for s in struct['cells'][:-1].split('I,')]
@@ -128,6 +132,7 @@ def parse_init(message):
              for s in struct['lines'].split(',')]
     struct['cells'] = cells
     struct['lines'] = lines
+    LOGGER.debug('Parsé :' + str(struct))
     return struct
 
 def parse_state(message):
@@ -151,6 +156,7 @@ def parse_state(message):
                   'matchid': '20ac18ab-6d18-450e-94af-bee53fdc8fca', 'type': 'state'}
     True
     """
+    LOGGER.debug('Reçu  : ' + message)
     struct = REGEX_GENERAL_STATE.match(message).groupdict()
     cells = [REGEX_CELL_STATE.match(s).groupdict()
              for s in struct['cells'].split(',')]
@@ -160,6 +166,7 @@ def parse_state(message):
     struct['cells'] = cells
     struct['moves'] = moves
     struct['type'] = 'state'
+    LOGGER.debug('Parsé : ' + str(struct))
     return struct
 
 def _parse_moves(moves):
@@ -184,7 +191,10 @@ def encode_order(user_id, order):
                                                               'percent': 33})
     '[0947e717-02a1-4d83-9470-a941b6e8ed07]MOV33FROM1TO4'
     """
-    return "[{user_id}]MOV{percent}FROM{from}TO{to}".format(user_id=user_id, **order)
+    LOGGER.debug('Reçu  : ' + user_id + ', ' + str(order))
+    result = "[{user_id}]MOV{percent}FROM{from}TO{to}".format(user_id=user_id, **order)
+    LOGGER.debug('Encodé : ' + result)
+    return result
 
 def parse_gameover(message):
     """ Parse un message de gameover.
@@ -193,8 +203,10 @@ def parse_gameover(message):
             'matchid': '20ac18ab-6d18-450e-94af-bee53fdc8fca'}
     True
     """
+    LOGGER.debug('Reçu  : ' + message)
     struct = REGEX_GAMEOVER.match(message).groupdict()
     struct['type'] = 'gameover'
+    LOGGER.debug('Parsé : ' + str(struct))
     return struct
 
 def parse_endofgame(message):
@@ -204,8 +216,10 @@ def parse_endofgame(message):
             '20ac18ab-6d18-450e-94af-bee53fdc8fca'}
     True
     """
+    LOGGER.debug('Reçu  : ' + message)
     struct = REGEX_ENDOFGAME.match(message).groupdict()
     struct['type'] = 'endofgame'
+    LOGGER.debug('Parsé : ' + str(struct))
     return struct
 
 
