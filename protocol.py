@@ -64,7 +64,7 @@ REGEX_GENERAL_STATE = re.compile(r"""STATE
 
 REGEX_CELL_STATE = re.compile(r"""(?P<cellid>\d+)
                                   \[
-                                  (?P<owner>\d+)
+                                  (?P<owner>-?\d+)
                                   \]
                                   (?P<offunit>\d+)
                                   '
@@ -126,8 +126,10 @@ def parse_init(message):
     """
     LOGGER.debug('Reçu  :' + message)
     struct = REGEX_GENERAL_INIT.match(message).groupdict()
+    struct['cells'] = struct['cells'] or ''
+    struct['lines'] = struct['lines'] or 'I'
     cells = [REGEX_CELL_INIT.match(s + 'I').groupdict()
-            for s in struct['cells'][:-1].split('I,')]
+             for s in struct['cells'][:-1].split('I,')]
     lines = [REGEX_LINE_INIT.match(s).groupdict()
              for s in struct['lines'].split(',')]
     struct['cells'] = cells
@@ -158,9 +160,10 @@ def parse_state(message):
     """
     LOGGER.debug('Reçu  : ' + message)
     struct = REGEX_GENERAL_STATE.match(message).groupdict()
+    struct['cells'] = struct['cells'] or ''
     cells = [REGEX_CELL_STATE.match(s).groupdict()
              for s in struct['cells'].split(',')]
-    moves = struct['moves'].split(',')
+    moves = struct['moves'].split(',') if struct['moves'] else []
     # l'itertool est là pour transformer [[x]] en [x]
     moves = list(itertools.chain(*[_parse_moves(move) for move in moves]))
     struct['cells'] = cells
