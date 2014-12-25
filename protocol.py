@@ -137,6 +137,23 @@ def parse_init(message):
     LOGGER.debug('Parsé :' + str(struct))
     return struct
 
+def parse_message(message):
+    """ Parse le message en identifiant son type. """
+    try:
+        if message.startswith('GAMEOVER'):
+            return parse_gameover(message)
+        elif message.startswith('ENDOFGAME'):
+            return parse_endofgame(message)
+        elif message.startswith('STATE'):
+            return parse_state(message)
+        else:
+            LOGGER.warning('Protocole inconnu : ' + message)
+            return None
+    except Exception as e:
+        LOGGER.error('Pas de correspondance trouvée pour ' + message)
+        LOGGER.debug(e)
+        return None
+
 def parse_state(message):
     """ Parse le message suivant le protocole donné.
 

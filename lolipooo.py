@@ -81,7 +81,9 @@ def play_pooo():
     while True:
         # On récupère et parse le nouvel état reçu.
         new_state = poooc.state_on_update()
-        new_state = protocol.parse_state(new_state)
+        new_state = protocol.parse_message(new_state)
+        if not new_state:
+            continue
         # Si le match est en cours, on le met à jour puis on récupère la
         # stratégie à adopter qu'on encode et envoie.
         matchid = new_state['matchid']
