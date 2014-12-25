@@ -84,14 +84,14 @@ def play_pooo():
         new_state = protocol.parse_state(new_state)
         # Si le match est en cours, on le met à jour puis on récupère la
         # stratégie à adopter qu'on encode et envoie.
-        with new_state['matchid'] as matchid:
-            if matchid in MATCHES:
-                if new_state['type'] in ('gameover', 'endofgame'):
-                    del MATCHES[matchid]
-                else:
-                    current_match = MATCHES[matchid]
-                    current_match.update(new_state)
-                    orders = current_match.compute_strategy()
-                    for order in orders:
-                        order = protocol.encode_order(UUID, order)
-                        poooc.order(order)
+        matchid = new_state['matchid']
+        if matchid in MATCHES:
+            if new_state['type'] in ('gameover', 'endofgame'):
+                del MATCHES[matchid]
+            elif new_state['type'] == 'state':
+                current_match = MATCHES[matchid]
+                current_match.update(new_state)
+                orders = current_match.compute_strategy()
+                for order in orders:
+                    order = protocol.encode_order(UUID, order)
+                    poooc.order(order)
