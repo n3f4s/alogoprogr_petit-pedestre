@@ -13,7 +13,7 @@ class Match:
         speed :: int            Vitesse de jeu
     """
 
-    def __init__(self, init, strat=strategy.dummy):
+    def __init__(self, init, strat=strategy.idle):
         self.id = init['matchid']
         self.cells = {cell['cellid']: Cell(cell, init['lines']) for cell in init['cells']}
         self.nb_players = init['nb_players']

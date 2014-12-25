@@ -101,3 +101,6 @@ def _strat_base2(match):
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
 
+def idle(match):
+    """ Ne rien faire (une stratégie d'avenir). """
+    return []
