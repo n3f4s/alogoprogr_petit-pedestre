@@ -29,6 +29,8 @@ class Cell:
         self.owner = 0
         self.moves = []
         self.links = {}
+        self.x = data['x']
+        self.y = data['y']
         for link in links:
             if link['cellid1'] == self.id:
                 self.links[link['cellid2']] = link['dist']
