@@ -2,55 +2,21 @@
 
 import cell
 import match
+import util
 
-def weakest_neighbour_foe(cell, match):
-	""" Retourne la cellule enemie adjacente ayant le moins d'unitée défensive
-	
-	Si il n'y a pas de cellule enemie adjacente la fonction renvoie None
-	"""
-	weakest=None
-	for id_ in cell.links:
-		if match.cells[id_].owner != cell.owner:
-			if weakest!=None and match.cells[id_].nb_def<weakest.nb_def:
-				weakest=match.cells[id_]
-			elif weakest == None:
-				weakest=match.cells[id_]
-	return weakest
-
-def weakest_neighbour_friend(cell, match):
-	""" Retourne la cellule allie adjacente ayant le moins d'unitée défensive
-	
-	Si il n'y a pas de cellule enemie adjacente la fonction renvoie None
-	"""
-	weakest=None
-	for id_ in cell.links:
-		if match.cells[id_].owner == cell.owner:
-			if weakest!=None and match.cells[id_].nb_def<weakest.nb_def:
-				weakest=match.cells[id_]
-			elif weakest == None:
-				weakest=match.cells[id_]
-	return weakest
-
-def distance(begin, end, match, _visited=None):
-	"""retourne la distance mimimale entre begin et end
-	
-	"""
-	if not _visited:
-		_visited = set()
-	if begin == end:
-		return 0
-	else:
-		dist_min=float("inf")
-		for id, dist in cell.links.items():
-			tmp = match.cells[id]
-			if tmp not in _visited:
-				_visited.add(tmp)
-				dist_tmp = dist+distance(tmp, end, match, _visited)
-				if dist_tmp < dist_min:
-					dist_min=dist_tmp
-		return dist_min
+"""Module contenant les stratégies
+"""
 
 def strategy(match, strat):
+	"""Fonction calculant les ordres à donner à un instant t du match
+
+		Argument:
+			match :: Match												Match en cour
+			strat :: str												Nom de la stratégie à appliquer
+
+		Retour:
+			[ {"from" : cell.id, "to" : cell.id, "percent" : int}, ... ] Liste des ordres
+	"""
 	list_strat = {
 			"base" : _strat_base,
 			"base2" : _strat_base2
@@ -66,11 +32,6 @@ def _strat_base(match):
 			weakest = weakest_neighbour_foe(cell, match) or weakest_neighbour_friend(cell, match)
 			orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
-
-def time_remaining_per_cent(match, mvt, dest):
-	total_time = match.cells[mvt.source].links[dest.id]
-	return (mvt.time_remaining/total_time)/100
-
 
 def _strat_base2(match):
 	"""Strat de base amélioré
@@ -100,6 +61,31 @@ def _strat_base2(match):
 					elif not as_incomming and time_remaining_per_cent(match, mvt, weakest)<50:
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
+
+def less_worse_strat(match):
+	cells_without_order = [ cell for cell in match.cells.values() if cell.owner == match.me ]
+	cells_with_order = { cell.id : Action(cell, weakest_neighbour_foe(cell, match) , 50 )\
+			for cell in our_cells\
+			if weakest_neighbour_foe(cell, match)!=None and not cells_without_order.remove(cell)} # OK, un peut dégeu mais bon
+
+	while len(cells_without_order) > 0:
+		tmp_cell = []
+		for cell in cells_without_order:
+			target = None
+			for id in cells.links.keys():
+				if id in cells_with_order.keys():
+					# On cible la cell qui est dans les cell ayant déjà un ordre
+					target = id
+			if target:
+				# Si la cell à une cible, on l'ajoute aux celle avc un ordre
+				cells_with_order.update( { cell.id : Action(cell, target, 75) } )
+				tmp_cell.append(cell)
+		# Suppression des cell auquels on a donner un ordre pandant la boucle
+		cells_without_order.pop(tmp_cell)
+	return [ act.to_dict() for cells_with_order.values() ]
+
+
+
 
 def idle(match):
     """ Ne rien faire (une stratégie d'avenir). """
