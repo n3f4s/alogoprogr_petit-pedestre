@@ -89,7 +89,7 @@ def time_remaining_per_cent(match, mvt, dest):
 	return (mvt.time_remaining/total_time)/100
 
 class Action:
-	def __init__(self, dest, dest, percent_unit):
+	def __init__(self, src, dest, percent_unit):
 		self.dest = 0  				#cell id
 		if isinstance(dest, int):
 			self.dest = dest

@@ -82,7 +82,7 @@ def less_worse_strat(match):
 				tmp_cell.append(cell)
 		# Suppression des cell auquels on a donner un ordre pandant la boucle
 		cells_without_order.pop(tmp_cell)
-	return [ act.to_dict() for cells_with_order.values() ]
+	return [ act.to_dict() for act in cells_with_order.values() ]
 
 
 
