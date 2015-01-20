@@ -18,8 +18,9 @@ def strategy(match, strat):
 			[ {"from" : cell.id, "to" : cell.id, "percent" : int}, ... ] Liste des ordres
 	"""
 	list_strat = {
-			"base" : _strat_base,
-			"base2" : _strat_base2
+			"base"   : _strat_base,
+			"base2"  : _strat_base2,
+			"strat3" : _less_worse_strat
 			}
 	return list_strat[strat](match)
 
@@ -62,11 +63,12 @@ def _strat_base2(match):
 						orders.append({"from": cell.id, "to": weakest.id, "percent": 50})
 	return orders
 
-def less_worse_strat(match):
+def _less_worse_strat(match):
 	cells_without_order = [ cell for cell in match.cells.values() if cell.owner == match.me ]
 	cells_with_order = { cell.id : Action(cell, weakest_neighbour_foe(cell, match) , 50 )\
 			for cell in our_cells\
-			if weakest_neighbour_foe(cell, match)!=None and not cells_without_order.remove(cell)} # OK, un peut dégeu mais bon
+			if weakest_neighbour_foe(cell, match)!=None and not cells_without_order.remove(cell)\
+	} # OK, un peut dégeu mais bon
 
 	while len(cells_without_order) > 0:
 		tmp_cell = []
