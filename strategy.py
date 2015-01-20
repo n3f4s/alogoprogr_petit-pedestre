@@ -81,15 +81,42 @@ def _less_worse_strat(match):
 					target = id
 			if target:
 				# Si la cell à une cible, on l'ajoute aux celle avc un ordre
-				cells_with_order.update( { cell.id : Action(cell, target, 75) } )
+				cells_with_order.update( { cell.id : Action(cell, target, 100) } )
 				tmp_cell.append(cell)
 		# Suppression des cell auquels on a donner un ordre pandant la boucle
 		cells_without_order.pop(tmp_cell)
 	return [ act.to_dict() for act in cells_with_order.values() ]
 
 
-
-
 def idle(match):
     """ Ne rien faire (une stratégie d'avenir). """
     return []
+
+def strat4(match):
+	our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
+	our_cells.sort(key=lambda c : unit_needed(match, c) )
+	our_cells_in_need = [ c for c in our_cells\
+			if unit_needed(\
+			lambda c : is_ally(match,c),\
+			c)>0\
+			].reverse()
+	
+	foe_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
+	foe_cells.sort(key=lambda c : unit_weakness(match, c) )
+	foe_cells_in_need = [ c for c in our_cells\
+			if unit_needed(\
+			lambda c : not is_ally(match,c) and c.owner!=-1,\
+			c)>0\
+			].reverse()
+	
+	neutral_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
+	neutral_cells.sort(key=lambda c : unit_weakness(match, c) )
+	neutral_cells_in_need = [ c for c in our_cells\
+			if unit_needed(\
+			lambda c : c.owner==-1,\
+			c)>0\
+			].reverse()
+
+
+
+
