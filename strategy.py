@@ -18,6 +18,7 @@ def strategy(match, strat):
 			[ {"from" : cell.id, "to" : cell.id, "percent" : int}, ... ] Liste des ordres
 	"""
 	list_strat = {
+			"idle"	 : idle
 			"base"   : _strat_base,
 			"base2"  : _strat_base2,
 			"strat3" : _less_worse_strat

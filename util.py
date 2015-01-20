@@ -86,7 +86,7 @@ def time_remaining_per_cent(match, mvt, dest):
 		Int 				Temps restant (en pourcentage) aux unités pour arriver à leurs cible
 	"""
 	total_time = match.cells[mvt.source].links[dest.id]
-	return (mvt.time_remaining/total_time)/100
+	return (mvt.time_remaining/total_time)*100
 
 class Action:
 	def __init__(self, src, dest, percent_unit):
