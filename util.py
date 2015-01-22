@@ -123,3 +123,59 @@ def unit_needed(cell, mine):
 def neighbour_foe(match, cell):
 	return [ c for c in cell.links if not is_ally(match, cell) ]
 
+def list_cell_by_unit_needed(match):
+	our_cells = []
+	foe_cells = []
+	neutral_cells = []
+	for c in match.cells.values():
+		if is_ally(match, c):
+			our_cells.append(c)
+		elif c.owner == -1:
+			neutral_cells.append(c)
+		else:
+			foe_cells.append(c)
+	our_cells.sort(
+			key=lambda c : unit_needed( c, is_ally(match,c) )
+			)
+	
+	foe_cells.sort(
+			key=lambda c : unit_needed(c, 
+				lambda c : c.owner!=-1 and not is_ally(match,c)
+				)
+			)
+	
+	neutral_cells.sort(
+			key=lambda c : unit_needed(c, lambda c : c.owner!=-1)
+			)
+	return { "our" : our_cells, "foe" : foe_cells, "neutral" : neutral_cells }
+
+def possible_action(match, cell, cells_targeted):
+	tmp = []
+	for neighbour_id in cell.links.keys():
+		neighbour_cell = match.cells[neighbour_id]
+		if neighbour_cell not in cells_targeted:
+			if neighbour_cell in cells["foe"][:len(cells["foe"])//2]:
+				tmp.append( (
+					unit_needed(
+						neighbour_cell,
+						lambda c : c.owner!=-1 and c.owner!=me
+						) ),
+					neighbour_cell
+					)
+			elif neighbour_cell in cells["neutral"][:len(cells["neutral"])//2]:
+				tmp.append( (
+					unit_needed(
+						neighbour_cell,
+						lambda c : c.owner==-1
+						) ),
+					neighbour_cell
+					)
+			else:
+				tmp.append( (
+					unit_needed(
+						neighbour_cell,
+						lambda c : c.owner!=me
+							) ),
+						neighbour_cell
+						)
+	return tmp

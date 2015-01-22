@@ -67,7 +67,7 @@ def _strat_base2(match):
 def _less_worse_strat(match):
 	cells_without_order = [ cell for cell in match.cells.values() if cell.owner == match.me ]
 	cells_with_order = { cell.id : Action(cell, weakest_neighbour_foe(cell, match) , 50 )\
-			for cell in our_cells\
+			for cell in cells["our"]\
 			if weakest_neighbour_foe(cell, match)!=None and not cells_without_order.remove(cell)\
 	} # OK, un peut dégeu mais bon
 
@@ -93,78 +93,12 @@ def idle(match):
     return []
 
 def strat4(match):
-	our_cells = []
-	foe_cells = []
-	neutral_cells = []
-	for c in match.cells.values():
-		if is_ally(match, c):
-			our_cells.append(c)
-		elif c.owner == -1:
-			neutral_cells.append(c)
-		else:
-			foe_cells.append(c)
-	our_cells.sort(
-			key=lambda c : unit_needed( c, is_ally(match,c) )
-			)
-	
-	foe_cells.sort(
-			key=lambda c : unit_needed(c, 
-				lambda c : c.owner!=-1 and not is_ally(match,c)
-				)
-			)
-	
-	neutral_cells.sort(
-			key=lambda c : unit_needed(c, lambda c : c.owner!=-1)
-			)
+	cells = list_cell_by_unit_needed(match)
 	cells_targeted = []
 	orders = []
-	for cell in our_cells[:len(our_cells)//2]:
-		tmp = []
-		for neighbour_id in cell.links.keys():
-			neighbour_cell = match.cells[neighbour_id]
-			if neighbour_cell not in cells_targeted:
-				if neighbour_cell in foe_cells[:len(foe_cells)//2]:
-					tmp.append( (
-								unit_needed(
-									neighbour_cell,
-									lambda c : c.owner!=-1 and c.owner!=me
-									) ),
-								neighbour_cell
-								)
-				elif neighbour_cell in neutral_cells[:len(neutral_cells)//2]:
-					tmp.append( (
-								unit_needed(
-									neighbour_cell,
-									lambda c : c.owner==-1
-									) ),
-								neighbour_cell
-								)
-				else:
-					tmp.append( (
-								unit_needed(
-									neighbour_cell,
-									lambda c : c.owner!=me
-									) ),
-								neighbour_cell
-								)
+	for cell in cells["our"][:len(cells["our"])//2]:
+		tmp = possible_action(match, cell, cells_targeted)
 		tmp.sort(key=lambda t : t[0])
 		orders.append( Action(cell,tmp[-1][-1],50) )# Faire un calcul pour le pourcentage à envoyer ??
 		cells_targeted.append(tmp[-1][-1])
 	return [ o.to_dict() for o in orders ]
-
-
-
-	for cell in foe_cells:
-		for neighbour_id in cell.links.keys:
-			neighbour_cell = match.cells[neighbour_id]
-			if neighbour_cell.owner == match.me and neighbour_id not in cells_with_order and neighbour_cell not in our_cells[len(our_cells)//2:]:
-				cells_with_order.append(neighbour)
-				orders.append( Action(neighbour, cell, 50))
-
-
-
-
-
-
-
-
