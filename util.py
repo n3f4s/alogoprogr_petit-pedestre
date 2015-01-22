@@ -190,13 +190,17 @@ def unit_awating(match, cell):
 		return cell.max_off + Cell.max_def
 
 def distance_to_nearest_enemy(match,cell):
-        dist = 0
-        for c in match.cell:
-                if c.owner != match.me and c.owner != -1:
-                        if distance(cell,c,match) < dist:
-                                dist = distance(cell,c,match)
+	dist = 0
+	for c in match.cell:
+		if c.owner != match.me and c.owner != -1:
+			if distance(cell,c,match) < dist:
+				dist = distance(cell,c,match)
+	return dist # C'est ça qu'il faut retourner ??
+
 def cell_value(match,cell):
-        if cell.owner == match.me:
-                value = cell.speed_prod-distance_to_nearest_enemy(match,cell)
-        else:
-                value = cell.speed_prod-1
+	value = 0 # Porté des variables !!!!
+	if cell.owner == match.me:
+		value = cell.speed_prod-distance_to_nearest_enemy(match,cell)
+	else:
+		value = cell.speed_prod-1
+	return value # ??

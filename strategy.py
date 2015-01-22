@@ -107,24 +107,23 @@ def strat4(match):
 
 
 def strat5(match):
-        cell_value = [c for c in match.cells.value()]
-        cell_value.sort(key=lambda c : cell_value(match, c) ) 
-        our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
+	cell_value = [c for c in match.cells.value()]
+	cell_value.sort(key=lambda c : cell_value(match, c) ) 
+	our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
 	our_cells.sort(key=lambda c : unit_needed(match, c) )
 	
-        
 	for cell in our_cells:
-                for c in cells_value:
-                        if c in cell.links:
-                                if unit_needed(cell)<0 and unit_needed(c)>0:
-                                        if abs(unit_needed(cell))>unit_needed(c):
-                                                #order.append(send unit_needed(c) from cell to c)
-                                                #faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
-                                                pass
-                                        else:
-                                                #order.append(send abs(unit_needed(cell)) from cell to c)
-                                                #cf ci-dessus
-                                                pass
+		for c in cells_value:
+			if c in cell.links:
+				if unit_needed(cell)<0 and unit_needed(c)>0:
+					if abs(unit_needed(cell))>unit_needed(c):
+						#order.append(send unit_needed(c) from cell to c)
+						#faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
+						pass
+					else:
+						#order.append(send abs(unit_needed(cell)) from cell to c)
+						#cf ci-dessus
+						pass
                                         
 
 if __name__ == "__main__":
