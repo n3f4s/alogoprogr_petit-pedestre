@@ -108,31 +108,84 @@ class Action:
 def is_ally(match, cell):
 	return me == cell.owner
 
-def unit_needed(cell, who):
+def unit_needed(cell, mine):
 	nb_unit = 0
 	for c in cell.links.keys():
-		if not who(c.owner):
+		if not mine(c.owner):
 			nb_unit += c.nb_off
 	for m in cell.moves:
-		if who(m.owner):
+		if mine(m.owner):
 			nb_unit -= m.nb_units
 		else:
 			nb_unit += m.nb_units
 	return nb_unit - ( cell.nb_off +nb_def )
-
-def cell_weakness(match, cell):
-	nb_unit = 0
-	for c in cell.links.keys():
-		if is_ally(c):
-			nb_unit += c.nb_off
-	for m in cell.moves:
-		if m.owner != match.me:
-			nb_unit -= m.nb_units
-		else:
-			nb_unit += m.nb_units
-	return nb_unit - ( cell.nb_off +nb_def )
-
 
 def neighbour_foe(match, cell):
 	return [ c for c in cell.links if not is_ally(match, cell) ]
+
+def list_cell_by_unit_needed(match):
+	our_cells = []
+	foe_cells = []
+	neutral_cells = []
+	for c in match.cells.values():
+		if is_ally(match, c):
+			our_cells.append(c)
+		elif c.owner == -1:
+			neutral_cells.append(c)
+		else:
+			foe_cells.append(c)
+	our_cells.sort(
+			key=lambda c : unit_needed( c, is_ally(match,c) )
+			)
+	
+	foe_cells.sort(
+			key=lambda c : unit_needed(c, 
+				lambda c : c.owner!=-1 and not is_ally(match,c)
+				)
+			)
+	
+	neutral_cells.sort(
+			key=lambda c : unit_needed(c, lambda c : c.owner!=-1)
+			)
+	return { "our" : our_cells, "foe" : foe_cells, "neutral" : neutral_cells }
+
+def possible_action(match, cell, cells_targeted):
+	tmp = []
+	for neighbour_id in cell.links.keys():
+		neighbour_cell = match.cells[neighbour_id]
+		if neighbour_cell not in cells_targeted:
+			if neighbour_cell in cells["foe"][:len(cells["foe"])//2]:
+				tmp.append( (
+					unit_needed(
+						neighbour_cell,
+						lambda c : c.owner!=-1 and c.owner!=me
+						) ),
+					neighbour_cell
+					)
+			elif neighbour_cell in cells["neutral"][:len(cells["neutral"])//2]:
+				tmp.append( (
+					unit_needed(
+						neighbour_cell,
+						lambda c : c.owner==-1
+						) ),
+					neighbour_cell
+					)
+			else:
+				tmp.append( (
+					unit_needed(
+						neighbour_cell,
+						lambda c : c.owner!=me
+							) ),
+						neighbour_cell
+						)
+	return tmp
+
+def to_percent(cell, units):
+	return (units*100)/cell.max_off
+
+def unit_awating(match, cell):
+	if cell.owner == match.me:
+		return unit_needed(cell, is_ally(match, cell) )
+	else:
+		return cell.max_off + Cell.max_def
 

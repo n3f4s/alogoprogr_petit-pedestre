@@ -8,25 +8,26 @@ import util
 """
 
 def strategy(match, strat):
-	"""Fonction calculant les ordres à donner à un instant t du match
+	"""Fonction calculant les ordres a donner a un instant t du match
 
 		Argument:
 			match :: Match												Match en cour
-			strat :: str												Nom de la stratégie à appliquer
+			strat :: str												Nom de la stratégie a appliquer
 
 		Retour:
 			[ {"from" : cell.id, "to" : cell.id, "percent" : int}, ... ] Liste des ordres
 	"""
 	list_strat = {
-			"idle"	 : idle
+			"idle"	 : idle,
 			"base"   : _strat_base,
 			"base2"  : _strat_base2,
-			"strat3" : _less_worse_strat
+			"strat3" : _less_worse_strat,
+			"strat4" : strat4
 			}
 	return list_strat[strat](match)
 
 def _strat_base(match):
-	"""Strat de base : atttaque l'enemi adjacent le plus faible ou aide l'allié adjacent le plus faible
+	"""Strat de base : atttaque l'enemi adjacent le plus faible ou aide l'allie adjacent le plus faible
 	"""
 	orders = []
 	for cell in match.cells:
@@ -36,10 +37,10 @@ def _strat_base(match):
 	return orders
 
 def _strat_base2(match):
-	"""Strat de base amélioré
+	"""Strat de base ameliore
 
-	N'attaque que si il n'y a pas de mouvement vers la cible ou si les unités attaquants la cible sont à plus de la moitié du trajet.
-	Si la cible est allié et qu'elle envoie des unités, alors on ne lui envoie rien
+	N'attaque que si il n'y a pas de mouvement vers la cible ou si les unites attaquants la cible sont a plus de la moitie du trajet.
+	Si la cible est allie et qu'elle envoie des unites, alors on ne lui envoie rien
 	"""
 	orders = []
 	for cell in match.cells:
@@ -67,9 +68,9 @@ def _strat_base2(match):
 def _less_worse_strat(match):
 	cells_without_order = [ cell for cell in match.cells.values() if cell.owner == match.me ]
 	cells_with_order = { cell.id : Action(cell, weakest_neighbour_foe(cell, match) , 50 )\
-			for cell in our_cells\
+			for cell in cells["our"]\
 			if weakest_neighbour_foe(cell, match)!=None and not cells_without_order.remove(cell)\
-	} # OK, un peut dégeu mais bon
+	} # OK, un peut degeu mais bon
 
 	while len(cells_without_order) > 0:
 		tmp_cell = []
@@ -77,10 +78,10 @@ def _less_worse_strat(match):
 			target = None
 			for id in cells.links.keys():
 				if id in cells_with_order.keys():
-					# On cible la cell qui est dans les cell ayant déjà un ordre
+					# On cible la cell qui est dans les cell ayant deja un ordre
 					target = id
 			if target:
-				# Si la cell à une cible, on l'ajoute aux celle avc un ordre
+				# Si la cell a une cible, on l'ajoute aux celle avc un ordre
 				cells_with_order.update( { cell.id : Action(cell, target, 100) } )
 				tmp_cell.append(cell)
 		# Suppression des cell auquels on a donner un ordre pandant la boucle
@@ -93,6 +94,7 @@ def idle(match):
     return []
 
 def strat4(match):
+<<<<<<< HEAD
 	our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
 	our_cells.sort(key=lambda c : unit_needed(match, c) )
 	our_cells_in_need = [ c for c in our_cells\
@@ -150,3 +152,18 @@ def strat5(match):
 
 
 
+=======
+	cells = list_cell_by_unit_needed(match)
+	cells_targeted = []
+	orders = []
+	for cell in cells["our"][:len(cells["our"])//2]:
+		tmp = possible_action(match, cell, cells_targeted)
+		tmp.sort(key=lambda t : t[0])
+		unit_to_send = max( 75, to_percent(unit_awating(match, cell), tmp[-1][-1]) )
+		orders.append( Action(cell,tmp[-1][-1],50) )# Faire un calcul pour le pourcentage a envoyer ??
+		cells_targeted.append(tmp[-1][-1])
+	return [ o.to_dict() for o in orders ]
+
+if __name__ == "__main__":
+	print("Look like there is no syntax error !")
+>>>>>>> origin/master
