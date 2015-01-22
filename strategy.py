@@ -119,36 +119,6 @@ def strat4(match):
 			c)>0\
 			].reverse()
 
-def strat5(match):
-        #à faire: faire une liste cells_value qui trie les cellules par importance
-        #en fonction de prod,nb_unit,distance à la cellule enemie la plus proche
-
-        our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
-	our_cells.sort(key=lambda c : unit_needed(match, c) )
-	our_cells_in_need = [ c for c in our_cells\
-			if unit_needed(\
-			lambda c : is_ally(match,c),\
-			c)>0\
-			].reverse()
-
-        
-	for cell in our_cells:
-                for c in cells_value:
-                        if c in cell.links:
-                                if unit_needed(cell)<0 and unit_needed(c)>0:
-                                        if abs(unit_needed(cell))>unit_needed(c):
-                                                #order.append(send unit_needed(c) from cell to c)
-                                                #faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
-                                                pass
-                                        else:
-                                                #order.append(send abs(unit_needed(cell)) from cell to c)
-                                                #cf ci-dessus
-                                                pass
-                                        
-                        
-                        
-                
-	
 
 
 
