@@ -108,30 +108,17 @@ class Action:
 def is_ally(match, cell):
 	return me == cell.owner
 
-def unit_needed(cell, who):
+def unit_needed(cell, mine):
 	nb_unit = 0
 	for c in cell.links.keys():
-		if not who(c.owner):
+		if not mine(c.owner):
 			nb_unit += c.nb_off
 	for m in cell.moves:
-		if who(m.owner):
+		if mine(m.owner):
 			nb_unit -= m.nb_units
 		else:
 			nb_unit += m.nb_units
 	return nb_unit - ( cell.nb_off +nb_def )
-
-def cell_weakness(match, cell):
-	nb_unit = 0
-	for c in cell.links.keys():
-		if is_ally(c):
-			nb_unit += c.nb_off
-	for m in cell.moves:
-		if m.owner != match.me:
-			nb_unit -= m.nb_units
-		else:
-			nb_unit += m.nb_units
-	return nb_unit - ( cell.nb_off +nb_def )
-
 
 def neighbour_foe(match, cell):
 	return [ c for c in cell.links if not is_ally(match, cell) ]
