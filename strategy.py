@@ -100,6 +100,7 @@ def strat4(match):
 	for cell in cells["our"][:len(cells["our"])//2]:
 		tmp = possible_action(match, cell, cells_targeted)
 		tmp.sort(key=lambda t : t[0])
+		unit_to_send = max( 75, to_percent(unit_awating(match, cell), tmp[-1][-1]) )
 		orders.append( Action(cell,tmp[-1][-1],50) )# Faire un calcul pour le pourcentage a envoyer ??
 		cells_targeted.append(tmp[-1][-1])
 	return [ o.to_dict() for o in orders ]

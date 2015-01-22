@@ -179,3 +179,13 @@ def possible_action(match, cell, cells_targeted):
 						neighbour_cell
 						)
 	return tmp
+
+def to_percent(cell, units):
+	return (units*100)/cell.max_off
+
+def unit_awating(match, cell):
+	if cell.owner == match.me:
+		return unit_needed(cell, is_ally(match, cell) )
+	else:
+		return cell.max_off + Cell.max_def
+
