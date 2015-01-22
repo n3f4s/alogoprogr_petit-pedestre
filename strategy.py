@@ -94,35 +94,6 @@ def idle(match):
     return []
 
 def strat4(match):
-<<<<<<< HEAD
-	our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
-	our_cells.sort(key=lambda c : unit_needed(match, c) )
-	our_cells_in_need = [ c for c in our_cells\
-			if unit_needed(\
-			lambda c : is_ally(match,c),\
-			c)>0\
-			].reverse()
-	
-	foe_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
-	foe_cells.sort(key=lambda c : unit_weakness(match, c) )
-	foe_cells_in_need = [ c for c in our_cells\
-			if unit_needed(\
-			lambda c : not is_ally(match,c) and c.owner!=-1,\
-			c)>0\
-			].reverse()
-	
-	neutral_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
-	neutral_cells.sort(key=lambda c : unit_weakness(match, c) )
-	neutral_cells_in_need = [ c for c in our_cells\
-			if unit_needed(\
-			lambda c : c.owner==-1,\
-			c)>0\
-			].reverse()
-
-
-
-
-=======
 	cells = list_cell_by_unit_needed(match)
 	cells_targeted = []
 	orders = []
@@ -158,4 +129,3 @@ def strat5(match):
 
 if __name__ == "__main__":
 	print("Look like there is no syntax error !")
->>>>>>> origin/master

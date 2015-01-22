@@ -188,6 +188,7 @@ def unit_awating(match, cell):
 		return unit_needed(cell, is_ally(match, cell) )
 	else:
 		return cell.max_off + Cell.max_def
+
 def distance_to_nearest_enemy(match,cell):
         dist = 0
         for c in match.cell:
@@ -199,6 +200,3 @@ def cell_value(match,cell):
                 value = cell.speed_prod-distance_to_nearest_enemy(match,cell)
         else:
                 value = cell.speed_prod-1
-
-        
-                
