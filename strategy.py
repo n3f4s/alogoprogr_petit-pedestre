@@ -136,17 +136,11 @@ def strat4(match):
 
 
 def strat5(match):
-        #à faire: faire une liste cells_value qui trie les cellules par importance
-        #en fonction de prod,nb_unit,distance à la cellule enemie la plus proche
-
+        cell_value = [c for c in match.cells.value()]
+        cell_value.sort(key=lambda c : cell_value(match, c) ) 
         our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
 	our_cells.sort(key=lambda c : unit_needed(match, c) )
-	our_cells_in_need = [ c for c in our_cells\
-			if unit_needed(\
-			lambda c : is_ally(match,c),\
-			c)>0\
-			].reverse()
-
+	
         
 	for cell in our_cells:
                 for c in cells_value:
