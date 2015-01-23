@@ -227,12 +227,20 @@ def distance_to_nearest_enemy(match,cell):
 		if c.owner != match.me and c.owner != -1:
 			if distance(cell,c,match) < dist:
 				dist = distance(cell,c,match)
-	return dist # C'est ça qu'il faut retourner ??
+	return dist
 
 def cell_value(match,cell):
-	value = 0 # Porté des variables !!!!
+	value = 0
 	if cell.owner == match.me:
 		value = cell.speed_prod-distance_to_nearest_enemy(match,cell)
 	else:
 		value = cell.speed_prod-1
-	return value # ??
+	return value
+def should_i_attack(match,source,target)
+        attack = True
+        for c in target.link:
+                if not is_ally(match,c):
+                        attack = False
+        if source.nb_off == source.max_off:
+                attack = True
+        return attack
