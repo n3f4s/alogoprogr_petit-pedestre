@@ -107,23 +107,26 @@ def strat4(match):
 
 
 def strat5(match):
-	cell_value = [c for c in match.cells.value()]
-	cell_value.sort(key=lambda c : cell_value(match, c) ) 
+	cell_value_list = [c for c in match.cells.value()]
+	cell_value_list.sort(key=lambda c : cell_value(match, c) ) 
+        cell_value_list.reverse()
 	our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
 	our_cells.sort(key=lambda c : unit_needed(match, c) )
+        orders
 	
 	for cell in our_cells:
-		for c in cells_value:
+		for c in cell_value_list:
 			if c in cell.links:
-				if unit_needed(cell)<0 and unit_needed(c)>0:
-					if abs(unit_needed(cell))>unit_needed(c):
+				if unit_needed(match, cell)<0 and unit_needed(match, c)>0:
+					if abs(unit_needed(match, cell))>unit_needed(match, c):
 						#order.append(send unit_needed(c) from cell to c)
 						#faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
-						pass
+                                            orders.append( Action( cell, c, 
 					else:
 						#order.append(send abs(unit_needed(cell)) from cell to c)
 						#cf ci-dessus
-						pass
+                                            orders.append( Action( cell, c, 
+        return [ a.to_dict() for a in orders ]
                                         
 
 if __name__ == "__main__":
