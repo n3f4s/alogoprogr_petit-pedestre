@@ -236,11 +236,23 @@ def cell_value(match,cell):
 	else:
 		value = cell.speed_prod-1
 	return value
+
 def should_i_attack(match,source,target)
-        attack = True
-        for c in target.link:
-                if not is_ally(match,c):
-                        attack = False
-        if source.nb_off == source.max_off:
-                attack = True
-        return attack
+	attack = True
+	for c in target.link:
+		if not is_ally(match,c):
+			attack = False
+		if source.nb_off == source.max_off:
+			attack = True
+	return attack
+
+def unit_to_send(match, target):
+	units = 0
+	if target.owner == match.me:
+		units = unit_to_send_ally(match, target) #TODO
+	elif target.owner == -1:
+		units = unit_to_send_neutral(match, target) #TODO
+	else:
+		units = unit_to_send_foe(match, target) # TODO
+	return units
+

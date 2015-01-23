@@ -121,13 +121,61 @@ def strat5(match):
 					if abs(unit_needed(match, cell))>unit_needed(match, c):
 						#order.append(send unit_needed(c) from cell to c)
 						#faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
-                                            orders.append( Action( cell, c, 
+						orders.append( Action( cell, c, ))
 					else:
 						#order.append(send abs(unit_needed(cell)) from cell to c)
 						#cf ci-dessus
-                                            orders.append( Action( cell, c, 
+						orders.append( Action( cell, c, ))
         return [ a.to_dict() for a in orders ]
-                                        
+
+def strat6(match):
+	# Phase 0 : copie de l'état du jeu
+	cells = copy_state(match)
+
+	# Phase 1 : Les cellules pouvant attaquer attaquent
+	orders = attack_if_can(cells)
+	cells_with_order = [ o.src for o in orders ]
+
+	cells_targeted = []
+	our_cells = list_with_weight(cells)
+	
+	while len(our_cells) > 4:
+		# Phase 2 : mise à jour de l'état du jeu
+		update_state(orders, cells)
+
+		# Phase 3 : Calcul des poids des cellules
+		our_cells = list_with_weight(our_cells)
+
+		# Phase 4 : aide
+		orders = help_cells(our_cells, cells_with_order, cells_targeted)# Modifie les trois paramêtre
+	return orders
+
+def strat_test(match):
+	# Construction des routes
+	if routes.empty():
+		build_route_table(match) # TODO
+	
+	# Listage des cibles
+	targets = list_targets(match) #TODO
+	our_cells = [ c for c in match.cells.values() if c.owner==match.me ]
+	# si il y a plus de cible alliée que de cible, on calcul le nombre
+	# de cellule qui attaquerons une cell enemie
+	nb_targets = len(our_cells)//len(targets)
+	if len(our_cells) > len(targets):
+		nb_targets = 1
+	target = 0
+	
+	# Attaque des cibles
+	orders = []
+	for ind in range(len(our_cells)-1):
+		if (ind+1)%nb_targets and target<len(targets)-1:
+			target = target+1
+		tmp_target = next_jump_to_target(our_cells[ind]) # TODO Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
+		#routes[our_cells].routes[targets[target]].next_jump
+		units = unit_to_send(match, tmp_target) #TODO : subfunction
+		orders.append( Action(our_cells[ind], tmp_target, units) )
+		# attaque sans différentiation amis/enemis/neutre ou a mettre dans unit_to_send ???
+	return orders
 
 if __name__ == "__main__":
 	print("Look like there is no syntax error !")
