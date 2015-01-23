@@ -89,7 +89,15 @@ def time_remaining_per_cent(match, mvt, dest):
 	return (mvt.time_remaining/total_time)*100
 
 class Action:
+	"""Classe servant à faciliter l'envoi d'ordre
+	"""
 	def __init__(self, src, dest, percent_unit):
+		"""Constructeur de la classe Action
+		Argument:
+			src			 :: int ou Cell	Source du mouvement
+			dest		 :: int ou Cell	Destination du mouvement
+			percent_unit :: int			pourcentage d'unité à envoyer
+		"""
 		self.dest = 0  				#cell id
 		if isinstance(dest, int):
 			self.dest = dest
@@ -103,12 +111,36 @@ class Action:
 		self.units_sent = percent_unit 	# nombre d'unité à envoyer
 
 	def to_dict(self):
+		"""Fonction renvoyant le mouvement sous forme d'un dictionnaire
+
+		Retour:
+			[ {"from" : cell.id, "to" : cell.id, "percent" : int}, ... ] Liste des ordres
+		"""
 		return { 'from':self.src , 'to':self.dest, 'percent':self.units_sent}
 
 def is_ally(match, cell):
+	"""Fonction renvoyant vrai si la cellule appartient au joueur
+
+	Argument:
+		match	:: Match	Match en cour
+		cell	:: Cell		Cellule dont on doit verifier si elle nous appatient
+	Retour:
+		Bool				True si la cellule appartient au joueur, False sinon
+	"""
 	return me == cell.owner
 
 def unit_needed(cell, mine):
+	"""Fonction renvoyant le nombre d'unité que la cellule à besoin
+
+	Cette fonction calcul la "menace" de la cellule en ajoutant le nombre d'unité enemis en déplacements vers cette cellule ainsi que les unité offensives des cellules enemies adjacentes et soustrait le nombre d'unité offensive des unités alliés adjacentes ainsi que le nombre d'unité des déplacement alliés vers cette cellule
+
+	Argument:
+		cell :: Cell		Cellule pour laquelle il faut calculer la "menace"
+		mine :: Function	Fonction renvoyant vrai si la cellule appartient au propriétaire de la cellule cell
+	
+	Retour
+		Int					"Menace" calculé selon le calcul ci-desssus
+	"""
 	nb_unit = 0
 	for c in cell.links.keys():
 		if not mine(c.owner):
