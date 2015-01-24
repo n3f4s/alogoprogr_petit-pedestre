@@ -244,3 +244,17 @@ def should_i_attack(match,source,target)
         if source.nb_off == source.max_off:
                 attack = True
         return attack
+def prod(cell):
+        prod = 0
+        if cell.speed_prod == 1:
+                prod = 1/2000
+        if cell.speed_prod == 2:
+                prod = 1/1500
+        if cell.speed_prod == 3:
+                prod = 1/1000
+        return prod
+
+def unit_to_send(match,source,target):
+        return unit_needed(target)+ int(source.links(target.id)*prod(target)) + 2
+        
+        
