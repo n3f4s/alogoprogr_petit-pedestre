@@ -1,4 +1,7 @@
-""" Module chargé de parser et encoder les communications avec le serveur. """
+""" Module chargé de parser et encoder les communications avec le serveur.
+
+Les tests se lancent avec `python protocol.py -v`.
+"""
 
 import re
 import itertools
