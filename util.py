@@ -246,7 +246,7 @@ def should_i_attack(match,source,target)
 			attack = True
 	return attack
 
-def unit_to_send(match, src, target):
+def unit_to_send_(match, src, target):
 	units = 0
 	if target.owner == match.me:
 		units = unit_to_send_ally(match, src, target) 
@@ -313,3 +313,15 @@ def list_targets(match):
 				targets.append(cell.id)
 	return targets
 
+def prod(cell):
+	prod = 0
+	if cell.speed_prod == 1:
+		prod = 1/2000
+	if cell.speed_prod == 2:
+		prod = 1/1500
+	if cell.speed_prod == 3:
+		prod = 1/1000
+	return prod
+
+def unit_to_send(match,source,target):
+	return unit_needed(target)+ int(source.links(target.id)*prod(target)) + 2

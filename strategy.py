@@ -107,50 +107,47 @@ def strat4(match):
 
 
 def strat5(match):
+        for cell in match.cells:
+                cell.unit_needed = unit_needed(match,cell)
 	cell_value_list = [c for c in match.cells.value()]
 	cell_value_list.sort(key=lambda c : cell_value(match, c) )
 	cell_value_list.reverse()
         our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
-	our_cells.sort(key=lambda c : unit_needed(match, c) )
-        orders
+	our_cells.sort(key=c.unit_needed)
+        orders = []
+        
 	
 	for cell in our_cells:
 		for c in cell_value_list:
 			if c in cell.links:
-				if unit_needed(match, cell)<0 and unit_needed(match, c)>0:
-					if abs(unit_needed(match, cell))>unit_needed(match, c):
-						#order.append(send unit_needed(c) from cell to c)
-						#faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
-						orders.append( Action( cell, c, ))
-					else:
-						#order.append(send abs(unit_needed(cell)) from cell to c)
-						#cf ci-dessus
-						orders.append( Action( cell, c, ))
+				if is_ally(match,c)
+					if cell.unit_needed<0 and c.unit_needed>0:
+						if abs(cell.unit_needed) > c.unit_needed:
+							orders.append( Action( cell, c, to_percent(cell,c.unit_needed)))
+							cell.unit_needed += c.unit_needed
+							c.unit_needed = 0
+										
+						else:
+							orders.append( Action( cell, c, to_percent(cell,abs(cell.unit_needed))))
+							c.unit_needed += cell.unit_needed
+							cell.unit_needed = 0
+								
+				if c.owner == -1
+					if cell.unit_needed<0 and should_i_attack(match,cell,c):
+						if abs(cell.unit_needed) > c.unit_needed:
+							orders.append( Action( cell, c, to_percent(cell,c.unit_needed)))
+							cell.unit_needed += c.unit_needed
+							c.unit_needed = 0
+										
+						else:
+							orders.append( Action( cell, c, to_percent(cell,abs(cell.unit_needed))))
+							c.unit_needed += cell.unit_needed
+							cell.unit_needed = 0
+				else:
+					if
         return [ a.to_dict() for a in orders ]
 
 def strat6(match):
-	# Phase 0 : copie de l'état du jeu
-	cells = copy_state(match)
-
-	# Phase 1 : Les cellules pouvant attaquer attaquent
-	orders = attack_if_can(cells)
-	cells_with_order = [ o.src for o in orders ]
-
-	cells_targeted = []
-	our_cells = list_with_weight(cells)
-	
-	while len(our_cells) > 4:
-		# Phase 2 : mise à jour de l'état du jeu
-		update_state(orders, cells)
-
-		# Phase 3 : Calcul des poids des cellules
-		our_cells = list_with_weight(our_cells)
-
-		# Phase 4 : aide
-		orders = help_cells(our_cells, cells_with_order, cells_targeted)# Modifie les trois paramêtre
-	return orders
-
-def strat_test(match):
 	# Construction des routes
 	if ROUTES.empty():
 		build_route_table(match)
@@ -172,7 +169,7 @@ def strat_test(match):
 			target = target+1
 		tmp_target = next_jump_to_target(our_cells[ind].id, targets[target] ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
 		#routes[our_cells].routes[targets[target]].next_jump
-		units = unit_to_send(match, our_cells[ind].id, tmp_target) 
+		units = unit_to_send_(match, our_cells[ind].id, tmp_target) 
 		orders.append( Action(our_cells[ind], tmp_target, units) )
 		# attaque sans différentiation amis/enemis/neutre ou a mettre dans unit_to_send ???
 	return orders

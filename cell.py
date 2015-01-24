@@ -32,6 +32,7 @@ class Cell:
         self.x = data['x']
         self.y = data['y']
         self.radius = data['radius']
+        unit_needed = 0
         for link in links:
             if link['cellid1'] == self.id:
                 self.links[link['cellid2']] = link['dist']
