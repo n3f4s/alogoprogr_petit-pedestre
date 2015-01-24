@@ -107,25 +107,49 @@ def strat4(match):
 
 
 def strat5(match):
+        for cell in match.cells:
+                cell.unit_needed = unit_needed(match,cell)
 	cell_value_list = [c for c in match.cells.value()]
 	cell_value_list.sort(key=lambda c : cell_value(match, c) )
 	cell_value_list.reverse()
         our_cells = [ c for c in match.cells.value() if is_ally(match, c) ]
-	our_cells.sort(key=lambda c : unit_needed(match, c) )
-        orders
+	our_cells.sort(key=c.unit_needed)
+        orders = []
+        
 	
 	for cell in our_cells:
 		for c in cell_value_list:
 			if c in cell.links:
-				if unit_needed(match, cell)<0 and unit_needed(match, c)>0:
-					if abs(unit_needed(match, cell))>unit_needed(match, c):
-						#order.append(send unit_needed(c) from cell to c)
-						#faire en sorte d'actualiser le nombre d'unités dont c à besoin et le nombre d'unités dont cell dispose
-                                            orders.append( Action( cell, c, 
-					else:
-						#order.append(send abs(unit_needed(cell)) from cell to c)
-						#cf ci-dessus
-                                            orders.append( Action( cell, c, 
+                                if is_ally(match,c)
+                                        if cell.unit_needed<0 and c.unit_needed>0:
+                                                if abs(cell.unit_needed) > c.unit_needed:
+                                                        orders.append( Action( cell, c, to_percent(cell,c.unit_needed)))
+                                                        cell.unit_needed += c.unit_needed
+                                                        c.unit_needed = 0
+                                                                
+                                                else:
+                                                        orders.append( Action( cell, c, to_percent(cell,abs(cell.unit_needed))))
+                                                        c.unit_needed += cell.unit_needed
+                                                        cell.unit_needed = 0
+                                                
+                                if c.owner == -1
+                                        if cell.unit_needed<0 and should_i_attack(match,cell,c):
+                                                if abs(cell.unit_needed) > c.unit_needed:
+                                                        orders.append( Action( cell, c, to_percent(cell,c.unit_needed)))
+                                                        cell.unit_needed += c.unit_needed
+                                                        c.unit_needed = 0
+                                                                
+                                                else:
+                                                        orders.append( Action( cell, c, to_percent(cell,abs(cell.unit_needed))))
+                                                        c.unit_needed += cell.unit_needed
+                                                        cell.unit_needed = 0
+                                else:
+                                        if
+                                        
+                                                
+                                                
+                                        
+                                                            
         return [ a.to_dict() for a in orders ]
                                         
 
