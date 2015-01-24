@@ -14,13 +14,27 @@ class Route_line:
 		self.dist = dist
 		self.prod_speed = prod_speed
 
-routes = {}
+ROUTES = {}
 
 def build_route_table(match):
-	# TODO
+	# Devrait marcher
+	tmp = {}
+	for cell_id,cell_val in match.cells.items():
+		tmp = send_route(match, cell_id,cell_id,cell_id,0, cell_value.speed_prod)
+		for id,route in tmp.items():
+			if not ROUTES.get(id):
+				ROUTES[id] = Route_table(id)
+			ROUTES[id].routes.append(route)
+
+def next_jump_to_target(cell, target):
+	# cell :: Int Id de la cell
+	# target :: Int Id de la target
+	# Retour :: Int Id du saut suivant
+	ROUTES[cell].routes.sort(key=lambda r : r.dist )
+	return ROUTES[cell].routes[0].next_jump
 
 def send_route(match, id, src, last_jump, dist, prod_speed, _visited = None):
-	# TODO
+	# Devrait marcher
 	# On envoit son adresse au cell adjacente (au lieu de demander les cells suivantes )
 	if not _visited:
 		_visited = {}
@@ -30,7 +44,7 @@ def send_route(match, id, src, last_jump, dist, prod_speed, _visited = None):
 		_visited[id] = Route_line(src, last_jump, dist, prod_speed)
 	for neighbour in match.cells[id].links.keys():
 		if neighbour not in _visited.keys():
-			_visited.update( send_route(match,neighbour,src,if,dist+1,match.cells[id].speed_prod,_visited) )
+			_visited.update( send_route(match,neighbour,src,id,dist+1,match.cells[id].speed_prod,_visited) )
 	# forme du retour:
 	# { id_cell : route_line(src,...) }
 	return _visited

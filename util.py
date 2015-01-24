@@ -246,13 +246,70 @@ def should_i_attack(match,source,target)
 			attack = True
 	return attack
 
-def unit_to_send(match, target):
+def unit_to_send(match, src, target):
 	units = 0
 	if target.owner == match.me:
-		units = unit_to_send_ally(match, target) #TODO
+		units = unit_to_send_ally(match, src, target) 
 	elif target.owner == -1:
-		units = unit_to_send_neutral(match, target) #TODO
+		units = unit_to_send_neutral(match, src, target) 
 	else:
-		units = unit_to_send_foe(match, target) # TODO
+		units = unit_to_send_foe(match, src, target) 
 	return units
+
+def unit_to_send_ally(match, src, target):
+	src_val = match.cells[src]
+	target_val = match.cells[src]
+	return min( to_percent(target_val, unit_awating(match, target_val)), 75 )
+
+def unit_to_send_neutral(match, src, target):
+	src_val = match.cells[src]
+	target_val = match.cells[src]
+	unit_sum = target_val.max_def + target_val.max_def
+	for neighbour in match.cells[target].links.keys():
+		if neighbour != src:
+			if match.cells[neighbour].owner == me:
+				unit_sum -= match.cells[neighbour].nb_off
+			elif match.cells[neighbour].owner != me and match.cells[neighbour].owner != -1:
+				unit_sum += match.cells[neighbour].nb_off
+	if unit_sum < 0: # Faire verif des déplacements en cour ??
+		return 50
+	elif unit_sum - src_val.nb_off <= 0:
+	# Sinon verifier qu'il y ait assez avec nous
+		return 75
+	else:
+	# Sinon rien envoyer
+		return 0
+
+def unit_to_send_foe(match, src, target):
+	src_val = match.cells[src]
+	target_val = match.cells[src]
+	sum_mvt = 0
+	for move in src_val.moves:
+		if move.owner == me:
+			sum_mvt += move.nb_unit
+		else:
+			sum_mvt -= move.nb_unit
+	superiority = (src_val.nb_off*src_val.speed_prod)/( (target_val.nb_def+target_val.nb_def)*target_val.speed_prod )
+	if superiority>2:
+		return 75
+	elif superiority>1 and sum_mvt>0:
+		return 75
+	elif superiority>1 and sum_mvt<0:
+		return 25
+	elif superiority<=0 and sum_mvt>0:
+		return 25
+	else:
+		return 0
+
+def list_targets(match):
+	targets = []
+	for cell in match.cells.values():
+		if cell.owner != match.me:
+			is_attackable = False
+			for neighbour_id in cell.link.keys():
+				if match.cells[neighbour_id].owner == match.me:
+					is_attackable = True
+			if is_attackable:
+				targets.append(cell.id)
+	return targets
 

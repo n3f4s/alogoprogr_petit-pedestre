@@ -152,8 +152,8 @@ def strat6(match):
 
 def strat_test(match):
 	# Construction des routes
-	if routes.empty():
-		build_route_table(match) # TODO
+	if ROUTES.empty():
+		build_route_table(match)
 	
 	# Listage des cibles
 	targets = list_targets(match) #TODO
@@ -170,9 +170,9 @@ def strat_test(match):
 	for ind in range(len(our_cells)-1):
 		if (ind+1)%nb_targets and target<len(targets)-1:
 			target = target+1
-		tmp_target = next_jump_to_target(our_cells[ind]) # TODO Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
+		tmp_target = next_jump_to_target(our_cells[ind].id, targets[target] ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
 		#routes[our_cells].routes[targets[target]].next_jump
-		units = unit_to_send(match, tmp_target) #TODO : subfunction
+		units = unit_to_send(match, our_cells[ind].id, tmp_target) 
 		orders.append( Action(our_cells[ind], tmp_target, units) )
 		# attaque sans différentiation amis/enemis/neutre ou a mettre dans unit_to_send ???
 	return orders
