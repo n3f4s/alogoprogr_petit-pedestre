@@ -1,0 +1,48 @@
+1) Structure générale du parseur.
+
+Chaque type de message (INIT, STATE,...) est parsé par une fonction nommée
+`parse_<type>`. Toutes ces fonctions sauf parse_register utilisent des regex
+définies en constantes globales, avec des groupes nommés pour les données
+interressantes. L'utilisation de la méthode `groupdict` des regex permet de
+récupérer le résultat parsé sous forme de dictionnaire associant le groupe nommé
+) la valeur. Le reste des fonctions consiste en divers bidouillages pour
+transformer certains str en int par exemple.
+
+Nous avons également mis en place un log simple utilisant le module `logging`.
+Il consiste à afficher le message reçu puis le message parsé. Cela permet en cas
+de problème que les parsing a été exécuté correctement.
+
+Dans la boucle principale, le bot peut recevoir des messages STATE, ENDOFGAME ou
+GAMEOVER. La fonction `parse_message` est utilisée pour appeler la bonne
+fonction de parsing. Le type de message est simplement reconnu à l'aide de la
+méthode str.startwith. Une condition else permet de gérer le cas où un nouveau
+type de message serait ajouté sans que le code du bot ne soit mis à jour. Le
+tout est enrobé dans un try/catch pour attraper les erreurs sans faire crasher
+le client.
+
+2) Cas de `parse_init` et de `parse_state`.
+
+Les messages de type INIT et STATE sont particuliers à traiter car ils
+comportent des listes de taille variable. Les regex python ne permettant pas
+d'avoir un nombre variable de groupes, nous avons dù diviser les listes et
+parser individuellement chaque item. Par exemple, dans `parse_state`, la string
+des cellules est récupérée par la regex principale en un bloc. Celui-ci est
+ensuite coupé au niveau des virgules, puis chaque fragment est parsé à l'aide de
+la regex REGEX_CELL_STATE. La liste python résultante est ensuite réintroduite
+dans le dictionnaire parsé à la place de la string.
+
+Le champ CELLS du message INIT est plus délicat à parser, car il comporte une
+virgule au sein même des items. La string est donc coupée au niveau de "I,",
+puis "I" est rajouté à la fin de chaque cellule avant parsing. Ce n'est pas très
+élégant, mais ça fonctionne.
+
+3) Tests
+
+Pour chaque type de message, un message d'example ainsi que le dictionnaire
+parsé sont inclus dans le fichier source. Nous avons utilisé la fonctionnalité
+doctest de python pour intégrer ces tests dans la docstring des fonctions. Les
+docstrings sont assez limitées, le résultat attendu est récupéré par python sous
+forme de texte. Comme les dictionnaires ne sont pas déterministes pour l'ordre
+des clés, nous avons dû comparer le retour de la fonction avec le résultat
+attendu et vérifier que cette comparaison est vraie, au lieu de simplement
+mettre le dictionnaire en résultat.
