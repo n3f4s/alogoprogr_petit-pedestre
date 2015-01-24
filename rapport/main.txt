@@ -1,0 +1,19 @@
+1) Stockage des données
+
+Comme le bot consiste en plusieurs fonctions appelées par le client, il a fallu
+choisir un moyen de conserver les données. Nous avons choisi d'utiliser deux
+variables globales : UUID et MATCHES. UUID contient l'uid du joueur.
+Normallement, on n'y accède qu'en lecture après initialisation. MATCHES est un
+dictionnaire associant un id de match à un objet Match (XXXX voir plus bas
+XXXXX), ceci afin de permettre à plusieurs matches de se dérouler en parallèle.
+
+La boucle principale de jeu a été simplifiée au maximum, la complexité étant
+distribuée entre les autres modules. On commence par récupérer les changements
+sur le plateau (message STATE) qu'on parse. Ensuite, on récupère l'objet Match
+correspondant au match concerné, on le met à jour avec les nouvelles données
+puis on lui demande de calculer la stratégie. Finalement, on encode cette
+stratégie et on l'envoie au serveur. Chaque module est bien séparé : l'ajout des
+messages GAMEOVER et ENDOFGAME n'ont nécessités des changements que dans
+protocol.py, ainsi que de légers changements haut-niveau dans lolipooo.py. Si le
+format des ordres à envoyer changeait, le module strategy.py ne serait
+probablement pas modifié.
