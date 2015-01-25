@@ -127,7 +127,7 @@ def is_ally(match, cell):
 	Retour:
 		Bool				True si la cellule appartient au joueur, False sinon
 	"""
-	return me == cell.owner
+	return match.me == cell.owner
 
 def unit_needed(cell, mine):
 	"""Fonction renvoyant le nombre d'unité que la cellule à besoin
