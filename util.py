@@ -164,6 +164,13 @@ def neighbour_foe(match, cell):
 	return [ c for c in cell.links if not is_ally(match, cell) ]
 
 def list_cell_by_unit_needed(match):
+	"""Fonction renvoyant un dictionnaire contenant la liste des cellules enemies, alliées et neutres.
+
+	Argument:
+		match :: Match Match en cour
+	Retour
+		{ str : [ Cell ] } dictionnnaire contenant la liste des cellules, de la forme : { "our" : [ cell alliées ], "neutral" : [ cell neutres ], "foe" : [ cells enemies ] }
+	"""
 	our_cells = []
 	foe_cells = []
 	neutral_cells = []
