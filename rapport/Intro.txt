@@ -1,0 +1,6 @@
+Le jeu Little Stars For Little Wars est un jeu de stratégie en temps réél dans lequel chaque
+joueur a pour but de contrôler des planètes en gerant le deplacements de ses unités.
+Le but de ce projet est de réaliser une intelligence artificielle capable de jouer à ce jeu, et qui soit la meilleure possible.
+Pour servir cet objectif, nous avons donc du étudier les meilleures façon de representer le terrain ainsi que les unités dans une architecture adequat,
+et nous avons également élaborer une stratégie d'action pour notre intelligence artificielle.
+
