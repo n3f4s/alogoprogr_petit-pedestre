@@ -153,6 +153,14 @@ def unit_needed(cell, mine):
 	return nb_unit - ( cell.nb_off +nb_def )
 
 def neighbour_foe(match, cell):
+	"""Fonction renoyant les cellules non alliées adjacente à la cellule passée en paramêtre
+
+	Arguments:
+		match :: Match Match en cour
+		cell  :: Cell dont on veut connaitre les cellules adjacentes qui ne nous appartiennent pas
+	Retour
+		[ Cell ] List des cellules adjacentes qui n'appartiennent pas au joueur
+	"""
 	return [ c for c in cell.links if not is_ally(match, cell) ]
 
 def list_cell_by_unit_needed(match):
@@ -237,7 +245,7 @@ def cell_value(match,cell):
 		value = cell.speed_prod-1
 	return value
 
-def should_i_attack(match,source,target)
+def should_i_attack(match,source,target):
 	attack = True
 	for c in target.link:
 		if not is_ally(match,c):
