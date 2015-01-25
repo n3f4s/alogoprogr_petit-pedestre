@@ -146,7 +146,7 @@ def unit_needed(match, cell):
 		if not c_val.owner!=cell.owner:
 			nb_unit += c_val.nb_off
 	for m in cell.moves:
-		if m.owner == match.me:
+		if m.owner == cell.owner:
 			nb_unit -= m.nb_units
 		else:
 			nb_unit += m.nb_units
