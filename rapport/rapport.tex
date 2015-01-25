@@ -36,8 +36,8 @@ Comme le bot consiste en plusieurs fonctions appelées par le client, il a fallu
 choisir un moyen de conserver les données. Nous avons choisi d'utiliser deux
 variables globales : UUID et MATCHES. UUID contient l'uid du joueur.
 Normallement, on n'y accède qu'en lecture après initialisation. MATCHES est un
-dictionnaire associant un id de match à un objet Match (XXXX voir plus bas
-XXXXX), ceci afin de permettre à plusieurs matches de se dérouler en parallèle.
+dictionnaire associant un id de match à un objet Match (cf ci-dessous)
+, ceci afin de permettre à plusieurs matches de se dérouler en parallèle.
 
 La boucle principale de jeu a été simplifiée au maximum, la complexité étant
 distribuée entre les autres modules. On commence par récupérer les changements
@@ -111,7 +111,7 @@ l'organisation des cellules.
 Les données basiques, comprenant l'id du match et du joueur, la vitesse de jeu
 et le nombre de joueurs, sont stockées sous leur forme d'origine, à savoir int
 ou str. Le membre cells est plus complexe, il est stocké sous forme d'un tableau
-associant un id de cellule à un objet Cell (XXXX voir plus bas XXXX). Ce tableau
+associant un id de cellule à un objet Cell (cf ci-dessous). Ce tableau
 permet de retrouver facilement l'objet Cell à l'aide de son identifiant.
 
 Cet objet contient peu de logique. L'initialisateur se contente d'initialiser
@@ -196,6 +196,12 @@ en l'actualsant pour toutes les cellules puis nous l'actualisons au fur et à me
 	\chapter*{Conclusion}
 La programmation de cette IA a été une experience très enrichissante,elle nous a permit de découvrir le travail en équipe et la répartition des taches, 
 il nous a également permit d'approfondir nos connaissances en python.
+
+En effet, nous avons dû nous répartir les tâches de façon équitable : une personne ayant trop ou trop peu de travail aurait ralenti tout le groupe.
+De plus, le projet nous à forcé à travailler collectivement, à discuter souvent de l'avancement du projet et ainsi travailler en équipe et non chacun 
+de notre coté.
+
+Enfin, ce projet nous à permi de découvrir le gestionnaire de version git.
 	\addcontentsline{toc}{chapter}{Conclusion}
 	\printindex
 \end{document}
