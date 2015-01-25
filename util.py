@@ -297,8 +297,6 @@ def cell_value(match,cell):
 	return value
 
 def should_i_attack(match,source,target):
-<<<<<<< HEAD
-=======
 	"""
         Fonction qui permet, pour une cellule neutre, de savoir s'il faut la conquerir ou non:
                - Si il y a une cellule proche, on la laisse faire le premier pas
@@ -311,7 +309,6 @@ def should_i_attack(match,source,target):
 	        Bool      True si on peut attaquer, False sinon
         
 	"""
->>>>>>> 77febe4410cf4fc4ce05831e136485f0308ee141
 	attack = True
 	for c in target.link:
 		if not is_ally(match,c):
