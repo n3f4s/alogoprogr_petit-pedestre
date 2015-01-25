@@ -1,0 +1,25 @@
+1) Les fonctions utilisées dans la strategie
+
+
+Cette strategie repose sur la fonction cell_value qui permet de calculer "l'importance" d'une cellule
+pour de determiner quelles sont les cellules que nous souhaitons capturer en priorité.
+Cette fonction dépend de 2 parametres importants:
+		-Le premier est éidement la production de la cellule.
+		-Le second est la distance de la cellule à la cellule ennemie la plus proche en nombre de saut. Cette distance
+permet de determiner si la cellule est proche des enemis ou pas, et donc si elle risque d'avoir besoin d'unités ou pas.
+Cela permet d'envoyer nos unités en direction du front en priorité.
+La deuxième fonction importante pour cette stratégie est la fonction unit_needed, qui calcule un "danger" pour une cellule,
+en fonction du nombre de cellules ennemies qu'il y a autour de la cellule, et des deplacements en direction de celle_ci.
+Ce taux de danger permet autant de savoir si une cellule ennemie est vulnerable que de savoir si une celue alliée elle permet donc
+de savoir le nombre de renfort dont pourrait avoir besoin une cellule, mais aussi de determiner si on peut attaquer une cellule enemie.
+
+2) Fonctionnement de la strategie
+
+En se basant sur l'importance des cellules définie ci-dessus , on créé donc une liste des cellules trié par ordre d'importance,
+On regarde ensuite chacune de nos cellules, et pour chacune d'entre elle, on va envoyer des unités aux cellules adjacentes qui en ont besoin
+en en envoyant en priorité aux cellules les plus importantes.
+On separe ici les cas selon le propriétaire de chaque cellule adjacente, car le nombre d'unités à envoyer peut varier selon le proprietaire.
+Il a fallu trouver un moyen d'actualiser les nombre d'unités dont une cellule avait besoin avant que les ordres ne soient transmis et qu'un nouveau
+state ne soit recupéré, c'est pourquoi nous avons ajouté l'atribut unit_needed à la classe cellule. Nous definissons donc le nombre au debut de la boucle
+en l'actualsant pour toutes les cellules puis nous l'actualisons au fur et à mesure que les ordres dont donnés.
+
