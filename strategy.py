@@ -69,9 +69,10 @@ def _strat_base2(match):
 	return orders
 
 def _less_worse_strat(match):
+	our_cells = [ c for c in match.cells.values() if c.owner==match.me ]
 	cells_without_order = [ cell for cell in match.cells.values() if cell.owner == match.me ]
 	cells_with_order = { cell.id : Action(cell, weakest_neighbour_foe(cell, match) , 50 )\
-			for cell in cells["our"]\
+			for cell in our_cells\
 			if weakest_neighbour_foe(cell, match)!=None and not cells_without_order.remove(cell)\
 	} # OK, un peut degeu mais bon
 
@@ -176,7 +177,7 @@ def strat6(match):
 		units = unit_to_send_(match, our_cells[ind].id, tmp_target) 
 		orders.append( Action(our_cells[ind], tmp_target, units) )
 		# attaque sans différentiation amis/enemis/neutre ou a mettre dans unit_to_send ???
-	return orders
+	return [ o.to_dict() for o in orders ]
 
 if __name__ == "__main__":
 	print("Look like there is no syntax error !")

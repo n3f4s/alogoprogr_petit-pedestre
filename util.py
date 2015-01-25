@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-import cell
-import match
-
+from cell  import *
+from match import *
 """Module contenant les fonctions nécéssaires au calcul des stratégies
 """
 
@@ -98,11 +97,11 @@ class Action:
 			dest		 :: int ou Cell	Destination du mouvement
 			percent_unit :: int			pourcentage d'unité à envoyer
 		"""
-		self.dest = 0  				#cell id
-		if isinstance(dest, int):
-			self.dest = dest
-		elif isinstance(dest, Cell):
-			self.dest = dest.id
+		self.src = 0  				#cell id
+		if isinstance(src, int):
+			self.src = src
+		elif isinstance(src, Cell):
+			self.src = src.id
 		self.dest = 0  				#cell id
 		if isinstance(dest, int):
 			self.dest = dest
