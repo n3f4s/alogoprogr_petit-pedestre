@@ -107,8 +107,8 @@ def strat4(match):
 
 
 def strat5(match):
-	for cell in match.cells.values():
-		cell.unit_needed = unit_needed(match,cell)
+        for cell in match.cells.values():
+                cell.unit_needed = unit_needed(match,cell)
 	cell_value_list = [c for c in match.cells.value()]
 	cell_value_list.sort(key=lambda c : cell_value(match, c) )
 	cell_value_list.reverse()
@@ -143,8 +143,8 @@ def strat5(match):
 				else:
 					if cell.unit_needed<0:
 						if abs(cell.unit_needed) > unit_to_send(match,cell,c):
-							orders.append( Action( cell, c, to_percent(cell,c.nb_off+c.nb_def+1)))
-							cell.unit_needed += c.nb_off+c.nb_def+1
+							orders.append( Action( cell, c, to_percent(cell,unit_to_send(match,cell,c))))
+							cell.unit_needed += unit_to_send(match,cell,c)
 							c.unit_needed = 0
 	return [ a.to_dict() for a in orders ]
 
