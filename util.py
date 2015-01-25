@@ -129,7 +129,7 @@ def is_ally(match, cell):
 	"""
 	return match.me == cell.owner
 
-def unit_needed(cell, mine):
+def unit_needed(match, cell):
 	"""Fonction renvoyant le nombre d'unité que la cellule à besoin
 
 	Cette fonction calcul la "menace" de la cellule en ajoutant le nombre d'unité enemis en déplacements vers cette cellule ainsi que les unité offensives des cellules enemies adjacentes et soustrait le nombre d'unité offensive des unités alliés adjacentes ainsi que le nombre d'unité des déplacement alliés vers cette cellule
@@ -143,7 +143,8 @@ def unit_needed(cell, mine):
 	"""
 	nb_unit = 0
 	for c in cell.links.keys():
-		if not mine(c.owner):
+                c = match.cells[c]
+		if not c.owner!=cell.owner:
 			nb_unit += c.nb_off
 	for m in cell.moves:
 		if mine(m.owner):
