@@ -22,6 +22,12 @@
 	\maketitle
 	\tableofcontents
 	\chapter*{Introduction}
+Le jeu Little Stars For Little Wars est un jeu de stratégie en temps réél dans lequel chaque
+joueur a pour but de contrôler des planètes en gerant le deplacements de ses unités.
+Le but de ce projet est de réaliser une intelligence artificielle capable de jouer à ce jeu, et qui soit la meilleure possible.
+Pour servir cet objectif, nous avons donc du étudier les meilleures façon de representer le terrain ainsi que les unités dans une architecture adequat,
+et nous avons également élaborer une stratégie d'action pour notre intelligence artificielle.
+
 	\addcontentsline{toc}{chapter}{Introduction}
 	\chapter{Architecture}
 %TODO : presenter ça mieux, schéma ??
@@ -143,12 +149,35 @@ ce qui nous a paru être le plus utile.
 			Le principe de cette stratégie est de lister les cellules par propriétaire et par
 			danger (calculé par unit\_needed). On parcour la moitié la moins en danger de nos cellules puis on liste les actions possible (grâce à possible\_action) pour ces cellules.
 			Puis on envoie un nombre d'unité correspondant au maximum entre 75\% des unités de la cellule source et le nombre d'unité attendu par la cellule cible.
-			
+		\section{strat5}
+			\subsection{Fonction utilisées dans la stratégie}
+Cette strategie repose sur la fonction cell\_value qui permet de calculer "l'importance" d'une cellule
+pour de determiner quelles sont les cellules que nous souhaitons capturer en priorité.
+Cette fonction dépend de 2 parametres importants:
+		-Le premier est éidement la production de la cellule.
+		-Le second est la distance de la cellule à la cellule ennemie la plus proche en nombre de saut. Cette distance
+permet de determiner si la cellule est proche des enemis ou pas, et donc si elle risque d'avoir besoin d'unités ou pas.
+Cela permet d'envoyer nos unités en direction du front en priorité.
+La deuxième fonction importante pour cette stratégie est la fonction unit\_needed, qui calcule un "danger" pour une cellule,
+en fonction du nombre de cellules ennemies qu'il y a autour de la cellule, et des deplacements en direction de celle\_ci.
+Ce taux de danger permet autant de savoir si une cellule ennemie est vulnerable que de savoir si une celue alliée elle permet donc
+de savoir le nombre de renfort dont pourrait avoir besoin une cellule, mais aussi de determiner si on peut attaquer une cellule enemie.
+			\subsection{Fonctionnement de la stratégie}
+En se basant sur l'importance des cellules définie ci-dessus , on créé donc une liste des cellules trié par ordre d'importance,
+On regarde ensuite chacune de nos cellules, et pour chacune d'entre elle, on va envoyer des unités aux cellules adjacentes qui en ont besoin
+en en envoyant en priorité aux cellules les plus importantes.
+On separe ici les cas selon le propriétaire de chaque cellule adjacente, car le nombre d'unités à envoyer peut varier selon le proprietaire.
+Il a fallu trouver un moyen d'actualiser les nombre d'unités dont une cellule avait besoin avant que les ordres ne soient transmis et qu'un nouveau
+state ne soit recupéré, c'est pourquoi nous avons ajouté l'atribut unit\_needed à la classe cellule. Nous definissons donc le nombre au debut de la boucle
+en l'actualsant pour toutes les cellules puis nous l'actualisons au fur et à mesure que les ordres dont donnés.
+		\section{}
 
 	\chapter{Répartition des tâches}
 		Nous nous sommes réparti les tâches en deux sous groupes. Une personne (Mikaël) s'est occupé de la communication
 		avec le serveur. Deux personnes (Jean et Vincent) se sont occupé des stratégies. Les stratégies de bases (\_strat\_base, \_strat\_base2 ainsi que \_less\_worse\_strat) on été crées à deux. Pour les autres stratégies, nous avons décidé de nous séparer les tâches (entre Jean et Vincent) pour explorer différentes options.
 	\chapter*{Conclusion}
+La programmation de cette IA a été une experience très enrichissante,elle nous a permit de découvrir le travail en équipe et la répartition des taches, 
+il nous a également permit d'approfondir nos connaissances en python.
 	\addcontentsline{toc}{chapter}{Conclusion}
 	\printindex
 \end{document}
