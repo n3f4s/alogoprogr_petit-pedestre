@@ -142,9 +142,9 @@ def unit_needed(match, cell):
 	"""
 	nb_unit = 0
 	for c in cell.links.keys():
-                c = match.cells[c]
-		if not c.owner!=cell.owner:
-			nb_unit += c.nb_off
+		c_val = match.cells[c]
+		if not c_val.owner!=cell.owner:
+			nb_unit += c_val.nb_off
 	for m in cell.moves:
 		if m.owner == match.me:
 			nb_unit -= m.nb_units
