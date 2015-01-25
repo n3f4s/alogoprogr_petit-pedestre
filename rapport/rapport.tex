@@ -24,8 +24,130 @@
 	\chapter*{Introduction}
 	\addcontentsline{toc}{chapter}{Introduction}
 	\chapter{Architecture}
+%TODO : presenter ça mieux, schéma ??
+		\section{Stockage des données}
+Comme le bot consiste en plusieurs fonctions appelées par le client, il a fallu
+choisir un moyen de conserver les données. Nous avons choisi d'utiliser deux
+variables globales : UUID et MATCHES. UUID contient l'uid du joueur.
+Normallement, on n'y accède qu'en lecture après initialisation. MATCHES est un
+dictionnaire associant un id de match à un objet Match (XXXX voir plus bas
+XXXXX), ceci afin de permettre à plusieurs matches de se dérouler en parallèle.
+
+La boucle principale de jeu a été simplifiée au maximum, la complexité étant
+distribuée entre les autres modules. On commence par récupérer les changements
+sur le plateau (message STATE) qu'on parse. Ensuite, on récupère l'objet Match
+correspondant au match concerné, on le met à jour avec les nouvelles données
+puis on lui demande de calculer la stratégie. Finalement, on encode cette
+stratégie et on l'envoie au serveur. Chaque module est bien séparé : l'ajout des
+messages GAMEOVER et ENDOFGAME n'ont nécessités des changements que dans
+protocol.py, ainsi que de légers changements haut-niveau dans lolipooo.py. Si le
+format des ordres à envoyer changeait, le module strategy.py ne serait
+probablement pas modifié.
+
+		\section{Parseur}
+			\subsection{Structure générale du parseur}
+Chaque type de message (INIT, STATE,...) est parsé par une fonction nommée
+`parse\_<type>`. Toutes ces fonctions sauf parse\_register utilisent des regex
+définies en constantes globales, avec des groupes nommés pour les données
+interressantes. L'utilisation de la méthode `groupdict` des regex permet de
+récupérer le résultat parsé sous forme de dictionnaire associant le groupe nommé
+) la valeur. Le reste des fonctions consiste en divers bidouillages pour
+transformer certains str en int par exemple.
+
+Nous avons également mis en place un log simple utilisant le module `logging`.
+Il consiste à afficher le message reçu puis le message parsé. Cela permet en cas
+de problème que les parsing a été exécuté correctement.
+
+Dans la boucle principale, le bot peut recevoir des messages STATE, ENDOFGAME ou
+GAMEOVER. La fonction `parse\_message` est utilisée pour appeler la bonne
+fonction de parsing. Le type de message est simplement reconnu à l'aide de la
+méthode str.startwith. Une condition else permet de gérer le cas où un nouveau
+type de message serait ajouté sans que le code du bot ne soit mis à jour. Le
+tout est enrobé dans un try/catch pour attraper les erreurs sans faire crasher
+le client.
+			\subsection{Cas de parse\_init et de parse\_state}
+Les messages de type INIT et STATE sont particuliers à traiter car ils
+comportent des listes de taille variable. Les regex python ne permettant pas
+d'avoir un nombre variable de groupes, nous avons dù diviser les listes et
+parser individuellement chaque item. Par exemple, dans `parse\_state`, la string
+des cellules est récupérée par la regex principale en un bloc. Celui-ci est
+ensuite coupé au niveau des virgules, puis chaque fragment est parsé à l'aide de
+la regex REGEX\_CELL\_STATE. La liste python résultante est ensuite réintroduite
+dans le dictionnaire parsé à la place de la string.
+
+Le champ CELLS du message INIT est plus délicat à parser, car il comporte une
+virgule au sein même des items. La string est donc coupée au niveau de "I,",
+puis "I" est rajouté à la fin de chaque cellule avant parsing. Ce n'est pas très
+élégant, mais ça fonctionne.
+			\subsection{Test}
+Pour chaque type de message, un message d'example ainsi que le dictionnaire
+parsé sont inclus dans le fichier source. Nous avons utilisé la fonctionnalité
+doctest de python pour intégrer ces tests dans la docstring des fonctions. Les
+docstrings sont assez limitées, le résultat attendu est récupéré par python sous
+forme de texte. Comme les dictionnaires ne sont pas déterministes pour l'ordre
+des clés, nous avons dû comparer le retour de la fonction avec le résultat
+attendu et vérifier que cette comparaison est vraie, au lieu de simplement
+mettre le dictionnaire en résultat.
+
+		\section{Structure de données}
+			\subsection{Introduction}
+Nous avons choisi d'utiliser des classes pour l'encapsulation qu'elles
+proposent. Voir le fichier lolipoop.py pour la simplicité de la boucle
+principale.
+			\subsection{Objet Match}
+L'objet Match contient les informations relatives à un match. Celles-ci sont un
+mélange de données statiques, comme les cellules et les liaisons entre elles, et
+de données dynamiques, comme le nombre d'unités par cellule. De plus, chaque
+objet Match contient une référence à la fonction calculant la stratégie. Cela
+permet par exemple de choisir la stratégie à appliquer en fonction de
+l'organisation des cellules.
+
+Les données basiques, comprenant l'id du match et du joueur, la vitesse de jeu
+et le nombre de joueurs, sont stockées sous leur forme d'origine, à savoir int
+ou str. Le membre cells est plus complexe, il est stocké sous forme d'un tableau
+associant un id de cellule à un objet Cell (XXXX voir plus bas XXXX). Ce tableau
+permet de retrouver facilement l'objet Cell à l'aide de son identifiant.
+
+Cet objet contient peu de logique. L'initialisateur se contente d'initialiser
+les membres, les détails d'instanciation des cellules étant délégué à la classe
+Cell. La mise à jour dynamique se fait simplement en parcourant les cellules et
+en appelant la méthode update correspondante. Quand au calcul de la stratégie,
+il est délégué à la fonction de stratégie choisie à l'initialisation.
+			\subsection{Objet Cell}
+Un objet Cell est instancié pour chaque cellule du plateau. Il centralise les
+données relatives à cette cellule. Il contient des données simples, comme la
+quantité maximale d'unités offensives, et des données plus complexes comme la
+liste des mouvements à des mouvements à destination de la cellule ou un
+dictionnaire associant l'id des cellules voisines à la distance les séparant de
+la cellule courante.
+
+La méthode update permet de mettre à jour les données dynamiques à partir des
+données parsées dans la boucle principale.
+			\subsection{Objet Movement}
+L'objet Movement modélise un mouvement d'unités vers une cellule. Il stocke le
+nombre d'unités en déplacement et leur propriétaire, la cellule de départ ainsi
+que le temps restant avant arrivée des unités.
+
+Nous avons choisi de stocker les déplacement dans la cellule d'arrivée car c'est
+ce qui nous a paru être le plus utile.
+
+
 	\chapter{Stratégie}
+		\section{Stratégies de base}
+		Les stratégies \_strat\_base et \_strat\_base2 sont des stratégies basique : on attaque la cellule enemie adjacente la plus faible ou on aide la cellule adjacente la plus faible s'il n'y a pas de cellule enemie adjacente
+		\section{\_less\_worse\_strat}
+			Bien qu'assez basique, cette stratégie est un peu plus complexe que les stratégies de base.
+			Le principe de cette stratégies est de partir des cellules ayant une cellule enemie adjacente, de leurs faire attaquer la cellule enemie adjacente la plus faible. Puis les cellules adjacentes aux cellules auquelles on vient de donner des ordres aident ces cellules.
+			Puis on recommence jusqu'a que toutes les cellules aient des ordres
+		\section{strat4}
+			Le principe de cette stratégie est de lister les cellules par propriétaire et par
+			danger (calculé par unit\_needed). On parcour la moitié la moins en danger de nos cellules puis on liste les actions possible (grâce à possible\_action) pour ces cellules.
+			Puis on envoie un nombre d'unité correspondant au maximum entre 75\% des unités de la cellule source et le nombre d'unité attendu par la cellule cible.
+			
+
 	\chapter{Répartition des tâches}
+		Nous nous sommes réparti les tâches en deux sous groupes. Une personne (Mikaël) s'est occupé de la communication
+		avec le serveur. Deux personnes (Jean et Vincent) se sont occupé des stratégies. Les stratégies de bases (\_strat\_base, \_strat\_base2 ainsi que \_less\_worse\_strat) on été crées à deux. Pour les autres stratégies, nous avons décidé de nous séparer les tâches (entre Jean et Vincent) pour explorer différentes options.
 	\chapter*{Conclusion}
 	\addcontentsline{toc}{chapter}{Conclusion}
 	\printindex

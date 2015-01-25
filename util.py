@@ -297,8 +297,6 @@ def cell_value(match,cell):
 	return value
 
 def should_i_attack(match,source,target):
-	"""
-	"""
 	attack = True
 	for c in target.link:
 		if not is_ally(match,c):
@@ -308,6 +306,19 @@ def should_i_attack(match,source,target):
 	return attack
 
 def unit_to_send_(match, src, target):
+	"""Fonction calculant le nombre d'unité à envoyer d'une cellule à une autre.
+
+	Le nombre d'unité à envoyer est calculé par différentes fonction par rapport au propriétaire
+	de la cellule
+
+	Arguments:
+		match  :: Match  Match en cours
+		src    :: Cell   Cellule envoyant les unitées
+		target :: Cell   Cellule à laquelle on doit envoyer des unitées
+
+	Retour:
+		Int              Nombre d'unités à envoyer.
+	"""
 	units = 0
 	if target.owner == match.me:
 		units = unit_to_send_ally(match, src, target) 
@@ -318,11 +329,33 @@ def unit_to_send_(match, src, target):
 	return units
 
 def unit_to_send_ally(match, src, target):
+	"""Fonction calculant le nombre d'unité à envoyer à une cellule alliée
+
+	Cette fonction renvoie le nombre d'unité calculé par unit_awating
+	Argument:
+		match  :: Match    Le match en cour
+		src    :: Cell     Cellule envoyant les unités
+		target :: Cell     Cellule cible
+	Retour:
+		Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
+	"""
 	src_val = match.cells[src]
 	target_val = match.cells[src]
 	return min( to_percent(target_val, unit_awating(match, target_val)), 75 )
 
 def unit_to_send_neutral(match, src, target):
+	"""Renvoie le nombre d'unité à envoyer à une cellule neutre
+
+	Cette fonction calcule le nombre d'unité qu'il resterais si toutes les
+	cellules adjacentes (source exepté) envoyait leurs unités offensive sur
+	la cellule neutre puis décide le nobre d'unité à envoyer
+	Argument:
+		match  :: Match    Le match en cour
+		src    :: Cell     Cellule envoyant les unités
+		target :: Cell     Cellule cible
+	Retour:
+		Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
+	"""
 	src_val = match.cells[src]
 	target_val = match.cells[src]
 	unit_sum = target_val.max_def + target_val.max_def
@@ -342,6 +375,18 @@ def unit_to_send_neutral(match, src, target):
 		return 0
 
 def unit_to_send_foe(match, src, target):
+	"""Fonction calculant le nombre d'unité à envoyer à une cellule enemie
+
+	Cette fonction calcule la différence d'unité et de vitesse de production entre la cellule attaquante
+	et la cible ainsi que le nombre d'unité en mouvement vers la cellule attaquante, puis renvoie le nombre
+	d'unité à envoyer
+	Argument:
+		match  :: Match    Le match en cour
+		src    :: Cell     Cellule envoyant les unités
+		target :: Cell     Cellule cible
+	Retour:
+		Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
+	"""
 	src_val = match.cells[src]
 	target_val = match.cells[src]
 	sum_mvt = 0
@@ -363,6 +408,14 @@ def unit_to_send_foe(match, src, target):
 		return 0
 
 def list_targets(match):
+	"""Cette fonction renvoie la liste des cellules n'appartenant pas au joueur et ayant au moins
+	une cellule adjacente appartenant au joueur.
+
+	Argument:
+		match  :: Match    Le match en cour
+	Retour:
+		[ Int ]            Liste des ID des cellules étant attaquable
+	"""
 	targets = []
 	for cell in match.cells.values():
 		if cell.owner != match.me:

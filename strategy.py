@@ -69,6 +69,8 @@ def _strat_base2(match):
 	return orders
 
 def _less_worse_strat(match):
+	"""
+	"""
 	our_cells = [ c for c in match.cells.values() if c.owner==match.me ]
 	cells_without_order = [ cell for cell in match.cells.values() if cell.owner == match.me ]
 	cells_with_order = { cell.id : Action(cell, weakest_neighbour_foe(cell, match) , 50 )\
@@ -104,7 +106,7 @@ def strat4(match):
 		tmp = possible_action(match, cell, cells)
 		tmp.sort(key=lambda t : t[0])
 		unit_to_send = max( 75, to_percent(unit_awating(match, cell), tmp[-1][-1]) )
-		orders.append( Action(cell,tmp[-1][-1],50) )# Faire un calcul pour le pourcentage a envoyer ??
+		orders.append( Action(cell,tmp[-1][-1],unit_to_send) )
 		cells_targeted.append(tmp[-1][-1])
 	return [ o.to_dict() for o in orders ]
 
