@@ -63,11 +63,11 @@ def distance(begin, end, match, _visited=None):
 		return 0
 	else:
 		dist_min=float("inf")
-		for id, dist in cell.links.items():
+		for id, dist in begin.links.items():
 			tmp = match.cells[id]
 			if tmp not in _visited:
 				_visited.add(tmp)
-				dist_tmp = dist+distance(tmp, end, match, _visited)
+				dist_tmp = 1+distance(tmp, end, match, _visited)
 				if dist_tmp < dist_min:
 					dist_min=dist_tmp
 		return dist_min
