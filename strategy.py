@@ -99,10 +99,9 @@ def idle(match):
 
 def strat4(match):
 	cells = list_cell_by_unit_needed(match)
-	cells_targeted = []
 	orders = []
 	for cell in cells["our"][:len(cells["our"])//2]:
-		tmp = possible_action(match, cell, cells_targeted)
+		tmp = possible_action(match, cell, cells)
 		tmp.sort(key=lambda t : t[0])
 		unit_to_send = max( 75, to_percent(unit_awating(match, cell), tmp[-1][-1]) )
 		orders.append( Action(cell,tmp[-1][-1],50) )# Faire un calcul pour le pourcentage a envoyer ??

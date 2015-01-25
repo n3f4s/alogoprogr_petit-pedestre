@@ -55,7 +55,7 @@ def distance(begin, end, match, _visited=None):
 		match	:: Match	Match en cours
 
 	Retour:
-		Int					Distance minimale entre les cellules (en nombre de saut) begin et end
+		Int					Distance minimale entre les cellules begin et end
 	"""
 	if not _visited:
 		_visited = set()
@@ -197,11 +197,20 @@ def list_cell_by_unit_needed(match):
 	return { "our" : our_cells, "foe" : foe_cells, "neutral" : neutral_cells }
 
 def possible_action(match, cell, cells_targeted):
+	"""Fonction renvoyant les actions possibles d'une cellule
+
+	Argument:
+		match          :: Match             Match en cours
+		cell           :: Cell              Cellule pour laquelle on veut lister les actions possibles
+		cells_targeted :: { str : Cell }    Liste des cellules formaté comme le retour de unit_needed
+	Retour:
+		[ (Int,Cell) ]                      Liste de couple (niveau de danger,cellule). Les cellules présentes dans cette listes sont les cellules atteignable par la cellule passée en paramêtre
+	"""
 	tmp = []
 	for neighbour_id in cell.links.keys():
 		neighbour_cell = match.cells[neighbour_id]
 		if neighbour_cell not in cells_targeted:
-			if neighbour_cell in cells["foe"][:len(cells["foe"])//2]:
+			if neighbour_cell in cells_targeted["foe"][:len(cell["foe"])//2]:
 				tmp.append( (
 					unit_needed(
 						neighbour_cell,
@@ -209,7 +218,7 @@ def possible_action(match, cell, cells_targeted):
 						) ),
 					neighbour_cell
 					)
-			elif neighbour_cell in cells["neutral"][:len(cells["neutral"])//2]:
+			elif neighbour_cell in cells_targeted["neutral"][:len(cells["neutral"])//2]:
 				tmp.append( (
 					unit_needed(
 						neighbour_cell,
