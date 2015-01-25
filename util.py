@@ -254,7 +254,7 @@ def unit_awating(match, cell):
 
 def distance_to_nearest_enemy(match,cell):
 	dist = 0
-	for c in match.cell:
+	for c in match.cells.values():
 		if c.owner != match.me and c.owner != -1:
 			if distance(cell,c,match) < dist:
 				dist = distance(cell,c,match)
