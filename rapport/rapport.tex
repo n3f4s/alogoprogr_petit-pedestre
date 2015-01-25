@@ -172,7 +172,9 @@ state ne soit recupéré, c'est pourquoi nous avons ajouté l'atribut unit\_need
 en l'actualsant pour toutes les cellules puis nous l'actualisons au fur et à mesure que les ordres dont donnés.
 		\section{strat6}
 			Tout d'abord, cette stratégie consiste à établir une table de routage pour chaque cellule, cette table de routage consiste en une liste de ligne contenant la cellule cible, la cellule vers laquelle aller vers la cible, ainsi que la distance à parcourir par ce chemin. La table de routage est créé une seule fois.
+
 			Ensuite, on séléctionne les cellules enemis ou neutre pouvant être attaquée. Puis on les répartis entre nos cellules les cibles.
+
 			Enfin, les cellules attaquent leurs cibles en prenant la route donnée par leurs tables de routage.
 			Le calcul de du nombre d'unité à envoyer ce fait ainsi:
 			\begin{itemize}
