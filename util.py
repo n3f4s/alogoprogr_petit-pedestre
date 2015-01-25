@@ -147,7 +147,7 @@ def unit_needed(match, cell):
 		if not c.owner!=cell.owner:
 			nb_unit += c.nb_off
 	for m in cell.moves:
-		if mine(m.owner):
+		if m.owner == match.me:
 			nb_unit -= m.nb_units
 		else:
 			nb_unit += m.nb_units
@@ -356,4 +356,4 @@ def prod(cell):
 	return prod
 
 def unit_to_send(match,source,target):
-	return unit_needed(target)+ int(source.links(target.id)*prod(target)) + 2
+	return unit_needed(target,match)+ int(source.links(target.id)*prod(target)) + 2
