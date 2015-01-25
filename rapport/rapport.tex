@@ -139,6 +139,7 @@ ce qui nous a paru être le plus utile.
 
 
 	\chapter{Stratégie}
+		Pour choisir la stratégie, il suffit de changer la valeur de la variable strategy\_name
 		\section{Stratégies de base}
 		Les stratégies \_strat\_base et \_strat\_base2 sont des stratégies basique : on attaque la cellule enemie adjacente la plus faible ou on aide la cellule adjacente la plus faible s'il n'y a pas de cellule enemie adjacente
 		\section{\_less\_worse\_strat}
@@ -150,7 +151,7 @@ ce qui nous a paru être le plus utile.
 			danger (calculé par unit\_needed). On parcour la moitié la moins en danger de nos cellules puis on liste les actions possible (grâce à possible\_action) pour ces cellules.
 			Puis on envoie un nombre d'unité correspondant au maximum entre 75\% des unités de la cellule source et le nombre d'unité attendu par la cellule cible.
 		\section{strat5}
-			\subsection{Fonction utilisées dans la stratégie}
+			\subsection{Fonctions utilisées dans la stratégie}
 Cette strategie repose sur la fonction cell\_value qui permet de calculer "l'importance" d'une cellule
 pour de determiner quelles sont les cellules que nous souhaitons capturer en priorité.
 Cette fonction dépend de 2 parametres importants:
@@ -193,6 +194,8 @@ en l'actualsant pour toutes les cellules puis nous l'actualisons au fur et à me
 	\chapter{Répartition des tâches}
 		Nous nous sommes réparti les tâches en deux sous groupes. Une personne (Mikaël) s'est occupé de la communication
 		avec le serveur. Deux personnes (Jean et Vincent) se sont occupé des stratégies. Les stratégies de bases (\_strat\_base, \_strat\_base2 ainsi que \_less\_worse\_strat) on été crées à deux. Pour les autres stratégies, nous avons décidé de nous séparer les tâches (entre Jean et Vincent) pour explorer différentes options.
+	\chapter{Problèmes recontré}
+		Nous n'avons pas réussi à transmettre les ordres au serveur qui ne les recevais pas. Nous n'avons donc pas pu tester convenablement nos I.A.
 	\chapter*{Conclusion}
 La programmation de cette IA a été une experience très enrichissante,elle nous a permit de découvrir le travail en équipe et la répartition des taches, 
 il nous a également permit d'approfondir nos connaissances en python.
