@@ -377,7 +377,7 @@ def unit_to_send_neutral(match, src, target):
 				unit_sum -= match.cells[neighbour].nb_off
 			elif match.cells[neighbour].owner != me and match.cells[neighbour].owner != -1:
 				unit_sum += match.cells[neighbour].nb_off
-	if unit_sum < 0: # Faire verif des déplacements en cour ??
+	if unit_sum < 0: 
 		return 50
 	elif unit_sum - src_val.nb_off <= 0:
 	# Sinon verifier qu'il y ait assez avec nous

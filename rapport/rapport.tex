@@ -170,8 +170,24 @@ On separe ici les cas selon le propriétaire de chaque cellule adjacente, car le
 Il a fallu trouver un moyen d'actualiser les nombre d'unités dont une cellule avait besoin avant que les ordres ne soient transmis et qu'un nouveau
 state ne soit recupéré, c'est pourquoi nous avons ajouté l'atribut unit\_needed à la classe cellule. Nous definissons donc le nombre au debut de la boucle
 en l'actualsant pour toutes les cellules puis nous l'actualisons au fur et à mesure que les ordres dont donnés.
-		\section{}
-
+		\section{strat6}
+			Tout d'abord, cette stratégie consiste à établir une table de routage pour chaque cellule, cette table de routage consiste en une liste de ligne contenant la cellule cible, la cellule vers laquelle aller vers la cible, ainsi que la distance à parcourir par ce chemin. La table de routage est créé une seule fois.
+			Ensuite, on séléctionne les cellules enemis ou neutre pouvant être attaquée. Puis on les répartis entre nos cellules les cibles.
+			Enfin, les cellules attaquent leurs cibles en prenant la route donnée par leurs tables de routage.
+			Le calcul de du nombre d'unité à envoyer ce fait ainsi:
+			\begin{itemize}
+					\item Si la cible est neutre
+						\subitem Si les cellules adjacentes alliées on assez d'unité pour conquérir la cellule et la garder on attaque avec la moitié des unité
+						\subitem Si sans nous, les cellules adjacentes alliées n'ont pas assez, on envoie les $\frac{3}{4}$ des unités de la cellule
+						\subitem Sinon on envoie $\frac{1}{4}$ des unités
+					\item Si la cellule est alliée
+						\subitem Si on a pas assez pour l'aider, on envoie $\frac{3}{4}$ de nos unité
+						\subitem Sinon on envoie le nombre d'unité dont elle a besoin
+					\item Si la cellules est enemie
+						\subitem Si on a un rapport nombre d'unité offensives / vitesse de production est le double de la cellule enemie : on attaque en force
+						\subitem Si le rapport est supérieur à 1 et qu'on est aidé par les cellules alliée adjacentes, on fait de même.
+						\subitem Sinon on envoie $\frac{1}{4}$
+			\end{itemize}
 	\chapter{Répartition des tâches}
 		Nous nous sommes réparti les tâches en deux sous groupes. Une personne (Mikaël) s'est occupé de la communication
 		avec le serveur. Deux personnes (Jean et Vincent) se sont occupé des stratégies. Les stratégies de bases (\_strat\_base, \_strat\_base2 ainsi que \_less\_worse\_strat) on été crées à deux. Pour les autres stratégies, nous avons décidé de nous séparer les tâches (entre Jean et Vincent) pour explorer différentes options.
