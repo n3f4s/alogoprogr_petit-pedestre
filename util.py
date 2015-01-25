@@ -169,7 +169,7 @@ def list_cell_by_unit_needed(match):
 	Argument:
 		match :: Match Match en cour
 	Retour
-		{ str : [ Cell ] } dictionnnaire contenant la liste des cellules, de la forme : { "our" : [ cell alliées ], "neutral" : [ cell neutres ], "foe" : [ cells enemies ] }
+		{ str : [ Cell ] } dictionnnaire contenant la liste des cellules, de la forme : { "our" : [ cell alliées ], "neutral" : [ cell neutres ], "foe" : [ cells enemies ] }, triées par ordre de danger
 	"""
 	our_cells = []
 	foe_cells = []
@@ -228,9 +228,25 @@ def possible_action(match, cell, cells_targeted):
 	return tmp
 
 def to_percent(cell, units):
+	"""Fonction convertissant un nombre d'unité en pourcentage du nombre d'unité max de la cellule envoyant les unités
+	Arguments:
+		cell :: Cell Cellule envoyant les unitées
+		unit :: Int  Nombre d'unitées à envoyer
+	Retour:
+		Int          Nombre a envoyer en pourcentage du nombre d'unité maximum de la cellule
+	"""
 	return (units*100)/cell.max_off
 
 def unit_awating(match, cell):
+	"""Fonction renvoyant le nombre d'unité qu'un cellule attend pou être capturée ou aidée
+
+	Si la cellule est une cellule alliée, on lui envoie un nombre d'unité correspondant à son "danger" (cf unit_needed), sinon on envoie le nombre d'unité correspondant au nombre d'unité offensive + defensive de la cellule
+	Argument:
+		match :: Match Match en cour
+		cell  :: Cellule pour laquelle on cherche à calculer le nombre d'unité à envoyer
+	Retour:
+		Int      Nombre d'unité à envoyer
+	"""
 	if cell.owner == match.me:
 		return unit_needed(cell, is_ally(match, cell) )
 	else:
@@ -321,7 +337,7 @@ def list_targets(match):
 	for cell in match.cells.values():
 		if cell.owner != match.me:
 			is_attackable = False
-			for neighbour_id in cell.link.keys():
+			for neighbour_id in cell.links.keys():
 				if match.cells[neighbour_id].owner == match.me:
 					is_attackable = True
 			if is_attackable:

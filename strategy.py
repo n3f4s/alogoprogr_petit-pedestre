@@ -153,7 +153,7 @@ def strat5(match):
 
 def strat6(match):
 	# Construction des routes
-	if ROUTES.empty():
+	if not len(ROUTES):
 		build_route_table(match)
 	
 	# Listage des cibles

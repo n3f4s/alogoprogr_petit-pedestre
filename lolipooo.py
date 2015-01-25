@@ -23,6 +23,8 @@ import logging
 # pour faire de l'introspection
 import inspect
 
+from strategy import strategy
+
 # string
 UUID = None
 # { matchid: Match
@@ -67,7 +69,7 @@ def init_pooo(init_string):
     """
     global MATCHES
     init = protocol.parse_init(init_string)
-    MATCHES[init['matchid']] = match.Match(init)
+    MATCHES[init['matchid']] = match.Match(init, lambda match : strategy(match,"strat6"))
 
 
 

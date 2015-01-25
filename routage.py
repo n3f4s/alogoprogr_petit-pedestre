@@ -20,7 +20,7 @@ def build_route_table(match):
 	# Devrait marcher
 	tmp = {}
 	for cell_id,cell_val in match.cells.items():
-		tmp = send_route(match, cell_id,cell_id,cell_id,0, cell_value.speed_prod)
+		tmp = send_route(match, cell_id,cell_id,cell_id,0, cell_val.speed_prod)
 		for id,route in tmp.items():
 			if not ROUTES.get(id):
 				ROUTES[id] = Route_table(id)
