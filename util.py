@@ -150,7 +150,7 @@ def unit_needed(match, cell):
 			nb_unit -= m.nb_units
 		else:
 			nb_unit += m.nb_units
-	return nb_unit - ( cell.nb_off +nb_def )
+	return nb_unit - ( cell.nb_off + cell.nb_def )
 
 def neighbour_foe(match, cell):
 	"""Fonction renoyant les cellules non alliées adjacente à la cellule passée en paramêtre
