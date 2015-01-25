@@ -23,7 +23,7 @@ class Cell:
         self.id = data['cellid']
         self.max_off = data['offsize']
         self.max_def = data['defsize']
-        self.speed_prod = len(data['prod']) # TODO à parser ? Ajout d'un len, et voilà!
+        self.speed_prod = len(data['prod'])
         self.nb_off = 0
         self.nb_def = 0
         self.owner = 0
@@ -32,7 +32,7 @@ class Cell:
         self.x = data['x']
         self.y = data['y']
         self.radius = data['radius']
-        unit_needed = 0
+        self.unit_needed = 0
         for link in links:
             if link['cellid1'] == self.id:
                 self.links[link['cellid2']] = link['dist']
