@@ -4,9 +4,11 @@ import cell
 import match
 from util import *
 from routage import *
+from random import *
 
 """Module contenant les stratégies
 """
+
 
 def strategy(match, strat):
 	"""Fonction calculant les ordres a donner a un instant t du match
@@ -25,10 +27,24 @@ def strategy(match, strat):
 			"strat3" : _less_worse_strat,
 			"strat4" : strat4,
 			"strat5" : strat5,
-			"strat6" : strat6
+			"strat6" : strat6,
+                        "random" : random
 			}
 	return list_strat[strat](match)
 
+def random(match):
+        orders=[]
+        our_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
+        cell = our_cells[randint(0,len(our_cells)-1)]
+        neighbour_list = [ match.cells[id_] for id_ in cell.links ]
+        neighbour = neighbour_list [randint(0,len(neighbour_list)-1)]
+        orders.append({"from": cell.id, "to": neighbour.id, "percent": 100})
+        return orders
+
+
+
+
+       
 def _strat_base(match):
 	"""Strat de base : atttaque l'enemi adjacent le plus faible ou aide l'allie adjacent le plus faible
 	"""
