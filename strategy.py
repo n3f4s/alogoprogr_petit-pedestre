@@ -107,7 +107,6 @@ def strat4(match):
 
 
 def strat5(match):
-=======
 	for cell in match.cells.values():
 		cell.unit_needed = unit_needed(match,cell)
 	cell_value_list = [c for c in match.cells.value()]
@@ -148,7 +147,6 @@ def strat5(match):
 							cell.unit_needed += c.nb_off+c.nb_def+1
 							c.unit_needed = 0
 	return [ a.to_dict() for a in orders ]
->>>>>>> Stashed changes
 
 def strat6(match):
 	# Construction des routes
@@ -156,7 +154,7 @@ def strat6(match):
 		build_route_table(match)
 	
 	# Listage des cibles
-	targets = list_targets(match) #TODO
+	targets = list_targets(match)
 	our_cells = [ c for c in match.cells.values() if c.owner==match.me ]
 	# si il y a plus de cible alliée que de cible, on calcul le nombre
 	# de cellule qui attaquerons une cell enemie
