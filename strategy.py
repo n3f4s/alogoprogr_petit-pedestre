@@ -121,7 +121,7 @@ def strat5(match):
 		for c in cell_value_list:
 			if c in cell.links:
 				if is_ally(match,c):
-					if cell.unit_needed<0 and c.unit_needed>0:
+					if (cell.unit_needed<0 or cell_value(match,cell)<cell_value(match,c)) and c.unit_needed>0:
 						if abs(cell.unit_needed) > c.unit_needed:
 							orders.append( Action( cell, c, to_percent(cell,c.unit_needed)))
 							cell.unit_needed += c.unit_needed
@@ -133,14 +133,14 @@ def strat5(match):
 							cell.unit_needed = 0
 								
 				if c.owner == -1:
-					if cell.unit_needed<0 and should_i_attack(match,cell,c):
-						if abs(cell.unit_needed) > c.unit_needed:
+					if cell.nb_off > 0 and should_i_attack(match,cell,c):
+						if cell.nb_off > c.unit_needed:
 							orders.append( Action( cell, c, to_percent(cell,c.unit_needed)))
 							cell.unit_needed += c.unit_needed
 							c.unit_needed = 0
 						else:
-							orders.append( Action( cell, c, to_percent(cell,abs(cell.unit_needed))))
-							c.unit_needed += cell.unit_needed
+							orders.append( Action( cell, c, to_percent(cell,cell.nb_off)))
+							c.unit_needed -= cell.nb_off
 							cell.unit_needed = 0
 				else:
 					if cell.unit_needed<0:

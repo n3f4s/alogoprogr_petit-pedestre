@@ -298,6 +298,16 @@ def cell_value(match,cell):
 
 def should_i_attack(match,source,target):
 	"""
+        Fonction qui permet, pour une cellule neutre, de savoir s'il faut la conquerir ou non:
+               - Si il y a une cellule proche, on la laisse faire le premier pas
+               - On conquiert la cellule sinon
+        Argument:
+		match :: Match   Match en cour
+		source  :: Cell    Cellule qui veut attaquer
+		target :: Cell    Cellule que l'on veut conquerir
+	Retour:
+	        Bool      True si on peut attaquer, False sinon
+        
 	"""
 	attack = True
 	for c in target.link:
@@ -375,14 +385,32 @@ def list_targets(match):
 	return targets
 
 def prod(cell):
-	prod = 0
-	if cell.speed_prod == 1:
-		prod = 1/2000
-	if cell.speed_prod == 2:
-		prod = 1/1500
-	if cell.speed_prod == 3:
-		prod = 1/1000
-	return prod
+        """
+        Fonction qui donne la production d'une cellule en unité par milisecondes
+        Argument:
+		cell :: Cell  Cellule dont on veut connaitre la production
+	Retout:
+	        float        
+	"""
+        prod = 0
+        if cell.speed_prod == 1:
+                prod = 1/2000
+        if cell.speed_prod == 2:
+                prod = 1/1500
+        if cell.speed_prod == 3:
+                prod = 1/1000
+        return prod
 
 def unit_to_send(match,source,target):
-	return unit_needed(target,match)+ int(source.links(target.id)*prod(target)) + 2
+        """
+        Fonction qui calcule le nombre d'unités nécéssaires à la conquête d'une cellule enemie en prenant en compte sa production
+
+        Argument:
+		match :: Match   Match en cour
+		source  :: Cell    Cellule qui attaque
+		target :: Cell    Cellule que l'on veut conquerir
+	Retour:
+	        int      Nombre d'unités
+        
+	"""
+        return unit_needed(target,match)+ int(source.links(target.id)*prod(target)) + 2
