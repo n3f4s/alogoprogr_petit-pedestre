@@ -69,7 +69,7 @@ def init_pooo(init_string):
     """
     global MATCHES
     init = protocol.parse_init(init_string)
-    MATCHES[init['matchid']] = match.Match(init, lambda match : strategy(match,"strat3"))
+    MATCHES[init['matchid']] = match.Match(init, lambda match : strategy(match,"strat5"))
 
 
 

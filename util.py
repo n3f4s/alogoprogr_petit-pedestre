@@ -262,6 +262,14 @@ def unit_awating(match, cell):
 		return cell.max_off + Cell.max_def
 
 def distance_to_nearest_enemy(match,cell):
+	"""Retourne la distance de l'enemi le plus proche de la cellule
+
+	Argument:
+		match :: Match  match en cours
+		cell  :: Cell   cellule pour laquelle on veut faire le calcul
+	Retour:
+		Int             Distance à l'enemi le plus proche
+	"""
 	dist = 0
 	for c in match.cells.values():
 		if c.owner != match.me and c.owner != -1:
@@ -270,6 +278,17 @@ def distance_to_nearest_enemy(match,cell):
 	return dist
 
 def cell_value(match,cell):
+	"""Fonction calculant la valeur d'une cellule.
+
+	La valeur d'une cellule est calculée ainsi : 
+		- Si la cellule appartient au joueur : (vitesse de production) - (distance à l'enemi le plus proche)
+		- Si la cellule n'appartient pas au joueur : (vitesse de production)-1
+	Argument:
+		match :: Match   Match en cour
+		cell  :: Cell    Cellule pour laquelle on veut calculer la valeur
+	Retour:
+		Int              Valeur de la cellule selon le calcule ci-dessus
+	"""
 	value = 0
 	if cell.owner == match.me:
 		value = cell.speed_prod-distance_to_nearest_enemy(match,cell)
@@ -278,6 +297,8 @@ def cell_value(match,cell):
 	return value
 
 def should_i_attack(match,source,target):
+	"""
+	"""
 	attack = True
 	for c in target.link:
 		if not is_ally(match,c):
