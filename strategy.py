@@ -2,7 +2,8 @@
 
 import cell
 import match
-import util
+from util import *
+from routage import *
 
 """Module contenant les stratégies
 """
@@ -22,7 +23,9 @@ def strategy(match, strat):
 			"base"   : _strat_base,
 			"base2"  : _strat_base2,
 			"strat3" : _less_worse_strat,
-			"strat4" : strat4
+			"strat4" : strat4,
+			"strat5" : strat5,
+			"strat6" : strat6
 			}
 	return list_strat[strat](match)
 
@@ -107,8 +110,8 @@ def strat4(match):
 
 
 def strat5(match):
-        for cell in match.cells.values():
-                cell.unit_needed = unit_needed(match,cell)
+	for cell in match.cells.values():
+		cell.unit_needed = unit_needed(match,cell)
 	cell_value_list = [c for c in match.cells.value()]
 	cell_value_list.sort(key=lambda c : cell_value(match, c) )
 	cell_value_list.reverse()
