@@ -1,0 +1,47 @@
+1) Intro
+
+Nous avons choisi d'utiliser des classes pour l'encapsulation qu'elles
+proposent. Voir le fichier lolipoop.py pour la simplicité de la boucle
+principale.
+
+2) Objet Match
+
+L'objet Match contient les informations relatives à un match. Celles-ci sont un
+mélange de données statiques, comme les cellules et les liaisons entre elles, et
+de données dynamiques, comme le nombre d'unités par cellule. De plus, chaque
+objet Match contient une référence à la fonction calculant la stratégie. Cela
+permet par exemple de choisir la stratégie à appliquer en fonction de
+l'organisation des cellules.
+
+Les données basiques, comprenant l'id du match et du joueur, la vitesse de jeu
+et le nombre de joueurs, sont stockées sous leur forme d'origine, à savoir int
+ou str. Le membre cells est plus complexe, il est stocké sous forme d'un tableau
+associant un id de cellule à un objet Cell (XXXX voir plus bas XXXX). Ce tableau
+permet de retrouver facilement l'objet Cell à l'aide de son identifiant.
+
+Cet objet contient peu de logique. L'initialisateur se contente d'initialiser
+les membres, les détails d'instanciation des cellules étant délégué à la classe
+Cell. La mise à jour dynamique se fait simplement en parcourant les cellules et
+en appelant la méthode update correspondante. Quand au calcul de la stratégie,
+il est délégué à la fonction de stratégie choisie à l'initialisation.
+
+3) Objet Cell
+
+Un objet Cell est instancié pour chaque cellule du plateau. Il centralise les
+données relatives à cette cellule. Il contient des données simples, comme la
+quantité maximale d'unités offensives, et des données plus complexes comme la
+liste des mouvements à des mouvements à destination de la cellule ou un
+dictionnaire associant l'id des cellules voisines à la distance les séparant de
+la cellule courante.
+
+La méthode update permet de mettre à jour les données dynamiques à partir des
+données parsées dans la boucle principale.
+
+4) Objet Movement
+
+L'objet Movement modélise un mouvement d'unités vers une cellule. Il stocke le
+nombre d'unités en déplacement et leur propriétaire, la cellule de départ ainsi
+que le temps restant avant arrivée des unités.
+
+Nous avons choisi de stocker les déplacement dans la cellule d'arrivée car c'est
+ce qui nous a paru être le plus utile.
