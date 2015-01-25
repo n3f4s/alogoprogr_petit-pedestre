@@ -242,9 +242,9 @@ def to_percent(cell, units):
 		cell :: Cell Cellule envoyant les unitées
 		unit :: Int  Nombre d'unitées à envoyer
 	Retour:
-		Int          Nombre a envoyer en pourcentage du nombre d'unité maximum de la cellule
+		Int          Nombre a envoyer en pourcentage du nombre d'unités de la cellule
 	"""
-	return (units*100)/cell.max_off
+	return (units*100)/cell.nb_off
 
 def unit_awating(match, cell):
 	"""Fonction renvoyant le nombre d'unité qu'un cellule attend pou être capturée ou aidée
@@ -310,7 +310,8 @@ def should_i_attack(match,source,target):
         
 	"""
 	attack = True
-	for c in target.link:
+	neighbour_list = [ match.cells[id_] for id_ in target.links.keys() ]
+	for c in neighbour_list:
 		if not is_ally(match,c):
 			attack = False
 		if source.nb_off == source.max_off:

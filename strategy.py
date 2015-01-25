@@ -153,8 +153,8 @@ def strat5(match):
 
                                 if c.owner == -1:
                                         if cell.nb_off > 0 and should_i_attack(match,cell,c):
-                                                if cell.nb_off > c.unit_needed:
-                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.unit_needed)})
+                                                if cell.nb_off > c.nb_off+c.nb_def+1:
+                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.nb_off+c.nb_def+1)})
                                                         cell.unit_needed += c.unit_needed
                                                         c.unit_needed = 0
                                                 else:
