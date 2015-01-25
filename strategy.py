@@ -116,7 +116,6 @@ def strat5(match):
 	cell_value_list.sort(key=lambda c : cell_value(match, c) )
 	cell_value_list.reverse()
 	our_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
-	our_cells.sort(key=c.unit_needed)
 	orders = []
 	for cell in our_cells:
 		for c in cell_value_list:
