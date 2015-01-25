@@ -2,16 +2,18 @@
 
 
 Cette strategie repose sur la fonction cell_value qui permet de calculer "l'importance" d'une cellule
-pour de determiner quelles sont les cellules que nous souhaitons capturer en priorité.
-Cette fonction dépend de 2 parametres importants:
-		-Le premier est éidement la production de la cellule.
+pour determiner quelles sont les cellules que nous souhaitons capturer en priorité.
+Cette fonction dépend de 2 paramètres importants:
+		-Le premier est évidement la production de la cellule.
 		-Le second est la distance de la cellule à la cellule ennemie la plus proche en nombre de saut. Cette distance
 permet de determiner si la cellule est proche des enemis ou pas, et donc si elle risque d'avoir besoin d'unités ou pas.
 Cela permet d'envoyer nos unités en direction du front en priorité.
 La deuxième fonction importante pour cette stratégie est la fonction unit_needed, qui calcule un "danger" pour une cellule,
 en fonction du nombre de cellules ennemies qu'il y a autour de la cellule, et des deplacements en direction de celle_ci.
-Ce taux de danger permet autant de savoir si une cellule ennemie est vulnerable que de savoir si une celue alliée elle permet donc
-de savoir le nombre de renfort dont pourrait avoir besoin une cellule, mais aussi de determiner si on peut attaquer une cellule enemie.
+Ce taux de danger permet d'avoir une mesure de la vulnérabilité d'une cellule
+amie ou ennemie. Elle permet donc
+de savoir le nombre de renfort dont pourrait avoir besoin une cellule, mais
+aussi de determiner si on peut attaquer une cellule ennemie.
 
 2) Fonctionnement de la strategie
 
