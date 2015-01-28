@@ -369,7 +369,7 @@ def unit_to_send_neutral(match, src, target):
     Retour:
         Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
     """
-    src_val = match.cells[src]
+    src_val = match.cells[src]#TODO Key error ici
     target_val = match.cells[src]
     unit_sum = target_val.max_def + target_val.max_def
     for neighbour in match.cells[target].links.keys():

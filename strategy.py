@@ -5,10 +5,25 @@ import match
 from util import *
 from routage import *
 from random import *
+import logging
 
 """Module contenant les stratégies
 """
 
+
+# Initialisation du logging
+logger = logging.getLogger("strat_logger")
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('\n\
+=========================================================================\n\
+%(name)s - %(levelname)s - %(message)s\n\
+=========================================================================\n\
+\n')
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+_has_FileHandler = False
 
 def strategy(match, strat):
     """Fonction calculant les ordres a donner a un instant t du match
@@ -171,30 +186,45 @@ def strat5(match):
 
 
 def strat6(match):
+    global logger
+    global _has_FileHandler
+    global ROUTES
+    if not _has_FileHandler:
+        _has_FileHandler = True
+        fh = logging.FileHandler("test.log".format(), "w")
+        fh.setLevel(logging.DEBUG)
+        logger.addHandler(fh)
     # Construction des routes
-    if not len(ROUTES):
+    if  ROUTES.get('NotEmpty'):
+        ROUTES.clear()
+        logger.debug("strat6 - Building routes")
         build_route_table(match)
-    
+
     # Listage des cibles
+    logger.debug("strat6 - Listing target")
     targets = list_targets(match)
+    logger.debug("strat6 - Listing our cells")
     our_cells = [ c for c in match.cells.values() if c.owner==match.me ]
     # si il y a plus de cible alliée que de cible, on calcul le nombre
     # de cellule qui attaquerons une cell enemie
     nb_targets = len(our_cells)//len(targets)
     if len(our_cells) > len(targets):
         nb_targets = 1
+    logger.debug( "strat6 - Setting {} target(s) by cell".format(nb_targets) )
     target = 0
     
     # Attaque des cibles
     orders = []
-    for ind in range(len(our_cells)-1):
+    for ind in range(len(our_cells)):
         if (ind+1)%nb_targets and target<len(targets)-1:
             target = target+1
+        logger.debug( "Targeting cell {}".format( match.cells[targets[target]].id ) )
         tmp_target = next_jump_to_target(our_cells[ind].id, targets[target] ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
         #routes[our_cells].routes[targets[target]].next_jump
-        units = unit_to_send_(match, our_cells[ind].id, tmp_target) 
+        units = unit_to_send_(match, our_cells[ind], match.cells[tmp_target]) 
+        logger.info( "Sending {} unit(s)".format(units) )
         orders.append( Action(our_cells[ind], tmp_target, units) )
-        # attaque sans différentiation amis/enemis/neutre ou a mettre dans unit_to_send ???
+        logger.info( "Sending order : {}".format(orders[-1]) )
     return [ o.to_dict() for o in orders ]
 
 if __name__ == "__main__":

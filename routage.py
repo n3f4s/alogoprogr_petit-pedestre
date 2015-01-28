@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 from match import *
+import logging
+
+logger = logging.getLogger("strat_logger")
 
 class Route_table:
     """Classe représentant une table de routage
@@ -25,21 +28,30 @@ class Route_line:
         self.dist = dist
         self.prod_speed = prod_speed
 
+    def __format__(self, format_spec):
+        return "to:{} by:{} dist:{}".format(self.dest, self.next_jump, self.dist)
+
 # Table de routage, de la forme { ID de la cell : Route_table }
-ROUTES = {}
+ROUTES = {'NotEmpty':True}
 
 def build_route_table(match):
     """Fonction initialisant la table de routage ROUTES
 
     Argument : match :: Match   Match en cour
     """
+    global logger
+    global ROUTES
     tmp = {}
     for cell_id,cell_val in match.cells.items():
+        logger.debug( " build_route_table - Creating routes to cell {}".format(cell_id) )
         tmp = send_route(match, cell_id,cell_id,cell_id,0, cell_val.speed_prod)
         for id,route in tmp.items():
             if not ROUTES.get(id):
+                logger.debug( "build_route_table - Creating route table for cell {}".format(id) )
                 ROUTES[id] = Route_table(id)
-            ROUTES[id].routes.append(route)
+            if route!=None:
+                logger.debug("build_route_table - Adding route {} to the cell {}".format(route, id) ) 
+                ROUTES[id].routes.append(route)
 
 def next_jump_to_target(cell, target):
     """Renvoie l'ID de la cellule suivante sur le chemin vers target
@@ -49,6 +61,7 @@ def next_jump_to_target(cell, target):
     Retour: 
         Int           Id du saut suivant
     """
+    global ROUTES
     ROUTES[cell].routes.sort(key=lambda r : r.dist )
     return ROUTES[cell].routes[0].next_jump
 
@@ -72,11 +85,12 @@ def send_route(match, id, src, last_jump, dist, prod_speed, _visited = None):
     if not _visited:
         _visited = {}
     if src == id:
+        logger.debug("send_route - Visiting the source cell")
         _visited[id] = None
     else:
         _visited[id] = Route_line(src, last_jump, dist, prod_speed)
+        logger.debug( "send_route - Adding route line {} for the cell {}".format(_visited[id], id) )
     for neighbour in match.cells[id].links.keys():
         if neighbour not in _visited.keys():
             _visited.update( send_route(match,neighbour,src,id,dist+1,match.cells[id].speed_prod,_visited) )
-    # forme du retour:
     return _visited
