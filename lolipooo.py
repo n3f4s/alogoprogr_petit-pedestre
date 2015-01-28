@@ -42,7 +42,7 @@ def register_pooo(uid):
     "0947e717-02a1-4d83-9470-a941b6e8ed07"
     """
     global UUID
-    UUID = protocol.parse_register(uid)
+    UUID = uid
 
 
 def init_pooo(init_string):

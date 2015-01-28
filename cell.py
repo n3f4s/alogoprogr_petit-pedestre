@@ -44,4 +44,4 @@ class Cell:
         self.owner = state['owner']
         self.nb_def = state['defunit']
         self.nb_off = state['offunit']
-        self.moves = [movement.Movement(move, self.links) for move in moves]
+        self.moves = [movement.Movement(move, self.links) for move in moves if move['to'] == self.id]

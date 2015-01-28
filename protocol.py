@@ -105,10 +105,6 @@ EXAMPLE_ORDER = r"[0947e717-02a1-4d83-9470-a941b6e8ed07]MOV33FROM1TO4"
 EXAMPLE_GAMEOVER = r"GAMEOVER[2]IN20ac18ab-6d18-450e-94af-bee53fdc8fca"
 EXAMPLE_ENDOFGAME = r"ENDOFGAME20ac18ab-6d18-450e-94af-bee53fdc8fca"
 
-def parse_register(message):
-    """ Retourne l'UUID du joueur."""
-    return message[3:]
-
 def parse_init(message):
     """ Parse le message suivant le protocole donné.
 
