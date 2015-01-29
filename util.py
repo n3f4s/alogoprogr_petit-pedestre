@@ -117,6 +117,9 @@ class Action:
         """
         return { 'from':self.src , 'to':self.dest, 'percent':self.units_sent}
 
+    def __format__(self, format_spec):
+        return "from{} to:{} percent:{}".format(self.src, self.dest, self.units_sent)
+
 def is_ally(match, cell):
     """Fonction renvoyant vrai si la cellule appartient au joueur
 
@@ -353,8 +356,8 @@ def unit_to_send_ally(match, src, target):
     Retour:
         Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
     """
-    src_val = match.cells[src]
-    target_val = match.cells[src]
+    src_val = src #match.cells[src.id]#TODO Key error ici
+    target_val = target # match.cells[target.id]
     return min( to_percent(target_val, unit_awating(match, target_val)), 75 )
 
 def unit_to_send_neutral(match, src, target):
@@ -370,14 +373,14 @@ def unit_to_send_neutral(match, src, target):
     Retour:
         Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
     """
-    src_val = match.cells[src]#TODO Key error ici
-    target_val = match.cells[src]
+    src_val = src #match.cells[src.id]#TODO Key error ici
+    target_val = target # match.cells[target.id]
     unit_sum = target_val.max_def + target_val.max_def
-    for neighbour in match.cells[target].links.keys():
+    for neighbour in target_val.links.keys():
         if neighbour != src:
-            if match.cells[neighbour].owner == me:
+            if match.cells[neighbour].owner == match.me:
                 unit_sum -= match.cells[neighbour].nb_off
-            elif match.cells[neighbour].owner != me and match.cells[neighbour].owner != -1:
+            elif match.cells[neighbour].owner != match.me and match.cells[neighbour].owner != -1:
                 unit_sum += match.cells[neighbour].nb_off
     if unit_sum < 0: 
         return 50
@@ -401,8 +404,8 @@ def unit_to_send_foe(match, src, target):
     Retour:
         Int                Nombre d'unité à envoyer en pourcentage du nombre max d'unité offensive
     """
-    src_val = match.cells[src]
-    target_val = match.cells[src]
+    src_val = src #match.cells[src.id]#TODO Key error ici
+    target_val = target # match.cells[target.id]
     sum_mvt = 0
     for move in src_val.moves:
         if move.owner == me:

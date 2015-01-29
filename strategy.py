@@ -215,23 +215,23 @@ def strat6(match):
     # si il y a plus de cible alliée que de cible, on calcul le nombre
     # de cellule qui attaquerons une cell enemie
     nb_targets = len(our_cells)//len(targets)
-    if len(our_cells) > len(targets):
+    if len(our_cells) > len(targets) or nb_targets<=0:
         nb_targets = 1
     logger.debug( "strat6 - Setting {} target(s) by cell".format(nb_targets) )
     target = 0
     
     # Attaque des cibles
     orders = []
-    for ind in range(len(our_cells)):
+    for ind, cell in enumerate(our_cells):
         if (ind+1)%nb_targets and target<len(targets)-1:
             target = target+1
         logger.debug( "Targeting cell {}".format( match.cells[targets[target]].id ) )
-        tmp_target = next_jump_to_target(our_cells[ind].id, targets[target] ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
+        tmp_target = next_jump_to_target(cell.id, targets[target] ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
         #routes[our_cells].routes[targets[target]].next_jump
-        units = unit_to_send_(match, our_cells[ind], match.cells[tmp_target]) 
-        logger.info( "Sending {} unit(s)".format(units) )
-        orders.append( Action(our_cells[ind], tmp_target, units) )
-        logger.info( "Sending order : {}".format(orders[-1]) )
+        units = unit_to_send_(match, cell, match.cells[tmp_target]) 
+        logger.debug( "Sending {} unit(s)".format(units) )
+        orders.append( Action(cell, tmp_target, units) )
+        logger.debug( "Sending order : {}".format(orders[-1]) )
     return [ o.to_dict() for o in orders ]
 
 if __name__ == "__main__":
