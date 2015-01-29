@@ -184,7 +184,7 @@ def strat5(match):
                                 orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,unit_to_send(match,cell,c))})
                                 cell.unit_needed += unit_to_send(match,cell,c)
                                 c.unit_needed = 0
-                            elif cell.nb_off < unit_to_send(match,cell,c):
+                            elif cell.nb_off < unit_to_send(match,cell,c) and len(neighbour_foe(match,cell))>0:
                                 print('HEY4')
                                 orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off//len(neighbour_foe(match,cell)))})
                                 
