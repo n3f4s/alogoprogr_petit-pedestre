@@ -175,17 +175,12 @@ def strat5(match):
                                 c.unit_needed = 0
 
                     elif c.owner!=match.me and c.owner != -1:
-                        print('HEY 1')
                         if cell.unit_needed<0 or cell_value(match,cell)<=cell_value(match,c) or len(neighbour_foe(match,cell)) == 1 :
-                            print('HEY2')
                             if cell.nb_off >= unit_to_send(match,cell,c):
-                                print('HEY3')
-                                print('send4'+str(unit_to_send(match,cell,c)))
                                 orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,unit_to_send(match,cell,c))})
                                 cell.unit_needed += unit_to_send(match,cell,c)
                                 c.unit_needed = 0
                             elif cell.nb_off < unit_to_send(match,cell,c) and len(neighbour_foe(match,cell))>0:
-                                print('HEY4')
                                 orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off//len(neighbour_foe(match,cell)))})
                                 
                                 

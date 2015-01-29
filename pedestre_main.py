@@ -11,10 +11,10 @@
 """
 
 #__version__ = '0.1'
-from tkinter import *
+#from tkinter import *
 import protocol
 import match
-import graph
+#import graph
 
 ## chargement de l'interface de communication avec le serveur
 import poooc # order, state, state_on_update, etime
@@ -81,9 +81,9 @@ def play_pooo():
     """
     global MATCHES
     logging.info('Entering play_pooo fonction from {} module...'.format(inspect.currentframe().f_back.f_code.co_filename))
-    Mafenetre = Tk()
-    Canevas = Canvas(Mafenetre, width = 270, height =270, bg ='white')
-    Canevas.pack(padx =5, pady =5)
+    #Mafenetre = Tk()
+    #Canevas = Canvas(Mafenetre, width = 270, height =270, bg ='white')
+    #Canevas.pack(padx =5, pady =5)
     
     while True:
         # On récupère et parse le nouvel état reçu.
@@ -104,5 +104,5 @@ def play_pooo():
                 for order in orders:
                     order = protocol.encode_order(UUID, order)
                     poooc.order(order)
-        graph.graph(Canevas,current_match)
-        Mafenetre.update()
+        #graph.graph(Canevas,current_match)
+        #Mafenetre.update()
