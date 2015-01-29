@@ -244,7 +244,10 @@ def to_percent(cell, units):
     Retour:
         Int          Nombre a envoyer en pourcentage du nombre d'unités de la cellule
     """
-    return (units*100)/cell.nb_off
+    val = 0
+    if cell.nb_off>0:
+        val = int((units*100)/cell.nb_off)
+    return val
 
 def unit_awating(match, cell):
     """Fonction renvoyant le nombre d'unité qu'un cellule attend pou être capturée ou aidée
@@ -270,7 +273,7 @@ def distance_to_nearest_enemy(match,cell):
     Retour:
         Int             Distance à l'enemi le plus proche
     """
-    dist = 0
+    dist = 100000000000
     for c in match.cells.values():
         if c.owner != match.me and c.owner != -1:
             if distance(cell,c,match) < dist:
@@ -291,7 +294,7 @@ def cell_value(match,cell):
     """
     value = 0
     if cell.owner == match.me:
-        value = cell.speed_prod-distance_to_nearest_enemy(match,cell)
+        value = 1-distance_to_nearest_enemy(match,cell)
     else:
         value = cell.speed_prod-1
     return value
@@ -312,10 +315,8 @@ def should_i_attack(match,source,target):
     attack = True
     neighbour_list = [ match.cells[id_] for id_ in target.links.keys() ]
     for c in neighbour_list:
-        if not is_ally(match,c):
+        if c.owner != match.me and c.owner != -1 and source.nb_off != source.max_off:
             attack = False
-        if source.nb_off == source.max_off:
-            attack = True
     return attack
 
 def unit_to_send_(match, src, target):
@@ -469,4 +470,4 @@ def unit_to_send(match,source,target):
             int           Nombre d'unités
         
     """
-        return unit_needed(target,match)+ int(source.links(target.id)*prod(target)) + 2
+        return target.nb_off + target.nb_def + int(source.links[target.id]*prod(target)) + 2

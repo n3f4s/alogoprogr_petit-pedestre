@@ -129,45 +129,52 @@ def strat4(match):
 
 def strat5(match):
         
-        for cell in match.cells.values():
-                cell.unit_needed = unit_needed(match,cell)
-        cell_value_list = [c for c in match.cells.values()]
-        cell_value_list.sort(key=lambda c : cell_value(match, c) )
-        cell_value_list.reverse()
-        our_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
-        orders = []
-        for cell in our_cells:
-                neighbour_list = [ match.cells[id_] for id_ in cell.links.keys() ]
-                for c in cell_value_list:
-                        if c in neighbour_list:
-                                if is_ally(match,c):
-                                        if (cell.unit_needed<0 or cell_value(match,cell)<cell_value(match,c)) and c.unit_needed>0:
-                                                if abs(cell.unit_needed) > c.unit_needed:
-                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.unit_needed) })
-                                                        cell.unit_needed += c.unit_needed
-                                                        c.unit_needed = 0
-                                                else:
-                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,abs(cell.unit_needed))})
-                                                        c.unit_needed += cell.unit_needed
-                                                        cell.unit_needed = 0
+    for cell in match.cells.values():
+        cell.unit_needed = unit_needed(match,cell)
+    cell_value_list = [c for c in match.cells.values()]
+    cell_value_list.sort(key=lambda c : cell_value(match, c) )
+    cell_value_list.reverse()
+    our_cells = [ c for c in match.cells.values() if is_ally(match, c) ]
+    orders = []
+    for cell in our_cells:
+        if cell.nb_off>0:
+            neighbour_list = [ match.cells[id_] for id_ in cell.links.keys() ]
+            for c in cell_value_list:
+                if c in neighbour_list:
+                    if c.owner == match.me:
+                        if (cell.unit_needed<0 or cell_value(match,cell)<cell_value(match,c)) and c.unit_needed>0:
+                            if abs(cell.unit_needed) > c.unit_needed:
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.unit_needed) })
+                                cell.unit_needed += c.unit_needed
+                                c.unit_needed = 0
+                            else:
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,abs(cell.unit_needed))})
+                                c.unit_needed += cell.unit_needed
+                                cell.unit_needed = 0
 
-                                if c.owner == -1:
-                                        if cell.nb_off > 0 and should_i_attack(match,cell,c):
-                                                if cell.nb_off > c.nb_off+c.nb_def+1:
-                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.nb_off+c.nb_def+1)})
-                                                        cell.unit_needed += c.unit_needed
-                                                        c.unit_needed = 0
-                                                else:
-                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off)})
-                                                        c.unit_needed -= cell.nb_off
-                                                        cell.unit_needed = 0
-                                else:
-                                        if cell.unit_needed<0 or cell_value(match,cell)<=cell_value(match,c):
-                                                if cell.nb_off > unit_to_send(match,cell,c):
-                                                        orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,unit_to_send(match,cell,c))})
-                                                        cell.unit_needed += unit_to_send(match,cell,c)
-                                                        c.unit_needed = 0
-        return orders
+                    if c.owner == -1:
+                        if cell_value(match,cell)<=cell_value(match,c) and should_i_attack(match,cell,c):
+                            if cell.nb_off > c.nb_off+c.nb_def+1:
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.nb_off+c.nb_def+2)})
+                                cell.unit_needed += c.unit_needed
+                                c.unit_needed = 0
+
+                    elif c.owner!=match.me and c.owner != -1:
+                        print('HEY 1')
+                        if cell.unit_needed<0 or cell_value(match,cell)<=cell_value(match,c) or len(neighbour_foe(match,cell)) == 1 :
+                            print('HEY2')
+                            if cell.nb_off >= unit_to_send(match,cell,c):
+                                print('HEY3')
+                                print('send4'+str(unit_to_send(match,cell,c)))
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,unit_to_send(match,cell,c))})
+                                cell.unit_needed += unit_to_send(match,cell,c)
+                                c.unit_needed = 0
+                            elif cell.nb_off < unit_to_send(match,cell,c):
+                                print('HEY4')
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off//len(neighbour_foe(match,cell)))})
+                                
+                                
+    return orders
 
 
 def strat6(match):
