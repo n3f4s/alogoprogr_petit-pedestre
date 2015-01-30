@@ -57,7 +57,7 @@ def next_jump_to_target(cell, target):
     """Renvoie l'ID de la cellule suivante sur le chemin vers target
     Argument:
         cell   :: Int   Id de la cell
-        target :: Int Id de la target
+        target :: Int   Id de la target
     Retour: 
         Int           Id du saut suivant
     """
@@ -94,3 +94,15 @@ def send_route(match, id, src, last_jump, dist, prod_speed, _visited = None):
         if neighbour not in _visited.keys():
             _visited.update( send_route(match,neighbour,src,id,dist+1,match.cells[id].speed_prod,_visited) )
     return _visited
+
+def nearest_target(cell, target_list):
+    global ROUTES
+    ROUTES[cell].routes.sort(key=lambda r : r.dist)
+    target = None
+    for route in ROUTES[cell].routes:
+        if not target and route.dest in target_list:
+            target = route.dest
+    # Renvoie l'ID de la target
+    return target
+
+

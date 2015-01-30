@@ -191,6 +191,7 @@ def strat6(match):
     global logger
     global _has_FileHandler
     global ROUTES
+
     if not _has_FileHandler:
         _has_FileHandler = True
         fh = logging.FileHandler("test.log".format(), "w")
@@ -205,25 +206,31 @@ def strat6(match):
     # Listage des cibles
     logger.debug("strat6 - Listing target")
     targets = list_targets(match)
+    logger.debug("strat6 - targets : {}".format(targets) )
     logger.debug("strat6 - Listing our cells")
     our_cells = [ c for c in match.cells.values() if c.owner==match.me ]
     # si il y a plus de cible alliée que de cible, on calcul le nombre
     # de cellule qui attaquerons une cell enemie
-    nb_targets = len(our_cells)//len(targets)
-    if len(our_cells) > len(targets) or nb_targets<=0:
-        nb_targets = 1
+    nb_targets = len(targets)#len(our_cells)//len(targets)
+    #if len(our_cells) > len(targets) or nb_targets<=0:
+    #    nb_targets = 1
     logger.debug( "strat6 - Setting {} target(s) by cell".format(nb_targets) )
     target = 0
     
     # Attaque des cibles
     orders = []
     for ind, cell in enumerate(our_cells):
-        if (ind+1)%nb_targets and target<len(targets)-1:
-            target = target+1
-        logger.debug( "Targeting cell {}".format( match.cells[targets[target]].id ) )
-        tmp_target = next_jump_to_target(cell.id, targets[target] ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
+#        if target<=nb_targets and target<len(targets):
+#            target = target+1
+#        else:
+#            target=0
+#        target = ind%len(targets)#TODO faire une fonction qui renvoie la plus proche parmi une liste de cell
+        target = nearest_target(ind, targets)
+        logger.debug( "Targeting cell {}".format( match.cells[target].id ) )
+        tmp_target = next_jump_to_target(cell.id, target ) # Fonction qui renvoie le saut suivant pour arriver à la cible avec la distance la plsu courte
         #routes[our_cells].routes[targets[target]].next_jump
-        units = unit_to_send_(match, cell, match.cells[tmp_target]) 
+        units = max(unit_to_send_(match, cell, match.cells[tmp_target]), 100)
+        units = 75#PATCH IMMONDE
         logger.debug( "Sending {} unit(s)".format(units) )
         orders.append( Action(cell, tmp_target, units) )
         logger.debug( "Sending order : {}".format(orders[-1]) )

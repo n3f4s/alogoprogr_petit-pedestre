@@ -263,7 +263,7 @@ def unit_awating(match, cell):
         Int      Nombre d'unité à envoyer
     """
     if cell.owner == match.me:
-        return unit_needed(cell, is_ally(match, cell) )
+        return unit_needed(match, cell )
     else:
         return cell.max_off + Cell.max_def
 
@@ -343,7 +343,7 @@ def unit_to_send_(match, src, target):
         units = unit_to_send_neutral(match, src, target) 
     else:
         units = unit_to_send_foe(match, src, target) 
-    return units
+    return max(abs(units),100)
 
 def unit_to_send_ally(match, src, target):
     """Fonction calculant le nombre d'unité à envoyer à une cellule alliée
@@ -389,7 +389,7 @@ def unit_to_send_neutral(match, src, target):
         return 75
     else:
     # Sinon rien envoyer
-        return 0
+        return 25
 
 def unit_to_send_foe(match, src, target):
     """Fonction calculant le nombre d'unité à envoyer à une cellule enemie
@@ -408,11 +408,11 @@ def unit_to_send_foe(match, src, target):
     target_val = target # match.cells[target.id]
     sum_mvt = 0
     for move in src_val.moves:
-        if move.owner == me:
-            sum_mvt += move.nb_unit
+        if move.owner == match.me:
+            sum_mvt += move.nb_units
         else:
-            sum_mvt -= move.nb_unit
-    superiority = (src_val.nb_off*src_val.speed_prod)/( (target_val.nb_def+target_val.nb_def)*target_val.speed_prod )
+            sum_mvt -= move.nb_units
+    superiority = ( (src_val.nb_off+1)*src_val.speed_prod)/( (target_val.nb_def+target_val.nb_def+1)*target_val.speed_prod )
     if superiority>2:
         return 75
     elif superiority>1 and sum_mvt>0:
@@ -436,13 +436,22 @@ def list_targets(match):
     targets = []
     for cell in match.cells.values():
         if cell.owner != match.me:
-            is_attackable = False
-            for neighbour_id in cell.links.keys():
-                if match.cells[neighbour_id].owner == match.me:
-                    is_attackable = True
-            if is_attackable:
+            #is_attackable = False
+            #for neighbour_id in cell.links.keys():
+            #    if match.cells[neighbour_id].owner == match.me:
+#                    is_attackable = True
+#            if is_attackable:
+            if is_on_front(match, cell):
                 targets.append(cell.id)
     return targets
+
+def is_on_front(match, cell):
+    is_on_front_ = False
+    for neighbour_id in cell.links.keys():
+        if match.cells[neighbour_id].owner == match.me:
+            is_on_front_ = True
+    return is_on_front_
+
 
 def prod(cell):
         """

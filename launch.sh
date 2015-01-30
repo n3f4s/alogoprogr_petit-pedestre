@@ -1,6 +1,7 @@
 #!/bin/bash
 
-cmd="poooserver.py -P 9876 -B 2048 --speed 2 --roomsize 2"
+
+cmd="poooserver.py -P 9876 -B 2048 --speed 1 --roomsize 2"
 if (( $# > 0 )); then
 	if [[ $1 == "server" ]]; then
 		echo -e 'Starting poooserver'
@@ -49,3 +50,7 @@ if (( $# > 0 )); then
 	fi
 fi
 python3 $cmd
+pypid=$!
+trap '{ kill -SIGINT $pypid; killall python3; exit -1; }' SIGINT
+echo
+echo -e "Finished"

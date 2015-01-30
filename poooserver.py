@@ -41,7 +41,7 @@ from pooogame import Room, Contest, Player, PoooSocket
 #            'error':logging.ERROR,
 #            'critical':logging.CRITICAL,
 #            }
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 

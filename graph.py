@@ -11,6 +11,7 @@ def graph(Canevas,match):
         y = cell.y/50 +40
         r = cell.radius/15
         Canevas.create_oval(x-r, y-r, x+r, y+r, outline=color, fill=color)
+        Canevas.create_text(x, y, text=str(cell.id))
         for id_ in cell.links:
             Canevas.create_line(x,y,match.cells[id_].x/50+40,match.cells[id_].y/50+40)
             
