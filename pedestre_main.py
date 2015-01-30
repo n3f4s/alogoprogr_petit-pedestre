@@ -83,7 +83,7 @@ def play_pooo():
     logging.info('Entering play_pooo fonction from {} module...'.format(inspect.currentframe().f_back.f_code.co_filename))
     logging.getLogger().setLevel(logging.WARNING)
     Mafenetre = Tk()
-    Canevas = Canvas(Mafenetre, width = 270, height =270, bg ='white')
+    Canevas = Canvas(Mafenetre, width = 500, height =500, bg ='white')
     Canevas.pack(padx =5, pady =5)
     
     while True:

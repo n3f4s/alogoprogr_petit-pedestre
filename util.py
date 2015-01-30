@@ -46,7 +46,7 @@ def weakest_neighbour_friend(cell, match):
     return weakest
 
 
-def distance(begin, end, match, _visited=None):
+def distance(match, begin, end, _visited=None):
     """retourne la distance mimimale entre begin et end
 
     Argument:
@@ -67,10 +67,30 @@ def distance(begin, end, match, _visited=None):
             tmp = match.cells[id]
             if tmp not in _visited:
                 _visited.add(tmp)
-                dist_tmp = 1+distance(tmp, end, match, _visited)
+                dist_tmp = 1+distance(match,tmp, end, _visited)
                 if dist_tmp < dist_min:
                     dist_min=dist_tmp
         return dist_min
+    
+def distance2(match,begin,end):
+    queue = []
+    queue.append(begin)
+    visited = {}
+    visited[begin]=0
+    while len(queue)>0:
+        t=queue.pop()
+        if t==end:
+            return visited[t]
+        for _id in t.links.keys():
+            u= match.cells[_id]
+            if u not in visited.keys():
+                visited[u]=visited[t]+1
+                queue.append(u)
+    return 42
+    
+
+
+
 
 
 def time_remaining_per_cent(match, mvt, dest):
@@ -276,11 +296,11 @@ def distance_to_nearest_enemy(match,cell):
     Retour:
         Int             Distance à l'enemi le plus proche
     """
-    dist = 100000000000
+    dist = 100000
     for c in match.cells.values():
-        if c.owner != match.me and c.owner != -1:
-            if distance(cell,c,match) < dist:
-                dist = distance(cell,c,match)
+        d =distance2(match,cell,c)
+        if c.owner != match.me and c.owner != -1 and d < dist:
+            dist = d
     return dist
 
 def cell_value(match,cell):
@@ -298,6 +318,8 @@ def cell_value(match,cell):
     value = 0
     if cell.owner == match.me:
         value = 1-distance_to_nearest_enemy(match,cell)
+    elif cell.owner == -1:
+        value = 1+2.5*cell.speed_prod-distance_to_nearest_enemy(match,cell)
     else:
         value = cell.speed_prod-1
     return value
@@ -315,11 +337,16 @@ def should_i_attack(match,source,target):
             Bool          True si on peut attaquer, False sinon
         
     """
-    attack = True
+    attack = target.nb_off+target.nb_def+1
     neighbour_list = [ match.cells[id_] for id_ in target.links.keys() ]
     for c in neighbour_list:
-        if c.owner != match.me and c.owner != -1 and source.nb_off != source.max_off:
-            attack = False
+        if (c.owner != match.me and c.owner != -1) or source.nb_off<2:
+            attack = 0
+    if source.nb_off == source.max_off:
+        attack = 2
+    for move in target.moves:
+        if move.owner != match.me:
+            attack = move.nb_units + 2
     return attack
 
 def unit_to_send_(match, src, target):
