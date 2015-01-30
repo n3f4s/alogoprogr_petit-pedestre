@@ -154,36 +154,40 @@ def strat5(match):
     for cell in our_cells:
         if cell.nb_off>0:
             neighbour_list = [ match.cells[id_] for id_ in cell.links.keys() ]
+            neighbour_ally = [ _id for _id in cell.links.keys() if match.cells[_id].owner == match.me and cell_value(match,match.cells[_id]) > cell_value(match,cell)]
+            neighbour_foe = [ _id for _id in cell.links.keys() if match.cells[_id].owner != match.me ]
             for c in cell_value_list:
                 if c in neighbour_list:
-                    if c.owner == match.me:
-                        if (cell.unit_needed<0 or cell_value(match,cell)<cell_value(match,c)) and c.unit_needed>0:
-                            if abs(cell.unit_needed) > c.unit_needed:
-                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.unit_needed) })
+                    if c.owner == match.me and c.nb_off<c.max_off:
+                        if cell_value(match,cell)<cell_value(match,c) or (c.unit_needed>cell.unit_needed and cell_value(match,cell)==cell_value(match,c)):
+                            if abs(cell.unit_needed) > c.unit_needed and cell_value(match,cell)==cell_value(match,c):
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.unit_needed)})
                                 cell.unit_needed += c.unit_needed
                                 c.unit_needed = 0
-                            else:
-                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,abs(cell.unit_needed))})
-                                c.unit_needed += cell.unit_needed
+                            elif len(neighbour_ally)>0:
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off//len(neighbour_ally))})
+                                c.unit_needed += cell.nb_off//len(neighbour_ally)
                                 cell.unit_needed = 0
 
                     if c.owner == -1:
-                        if cell_value(match,cell)<=cell_value(match,c) and should_i_attack(match,cell,c):
-                            if cell.nb_off > c.nb_off+c.nb_def+1:
-                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,c.nb_off+c.nb_def+2)})
-                                cell.unit_needed += c.unit_needed
+                        if len(neighbour_list)==len(neighbour_ally)+1 and len(neighbour_list)>0:
+                            orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off)})
+                            c.unit_needed += cell.nb_off
+                            cell.unit_needed = 0                            
+                        if (cell.unit_needed<0 or cell_value(match,cell)<=cell_value(match,c)) and should_i_attack(match,cell,c)> 0:
+                            if should_i_attack(match,cell,c)> 0:
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,should_i_attack(match,cell,c))})
+                                cell.unit_needed += should_i_attack(match,cell,c)
                                 c.unit_needed = 0
 
                     elif c.owner!=match.me and c.owner != -1:
-                        if cell.unit_needed<0 or cell_value(match,cell)<=cell_value(match,c) or len(neighbour_foe(match,cell)) == 1 :
+                        if cell.unit_needed<0 or cell_value(match,cell)<=cell_value(match,c) or len(neighbour_foe) == 1 :
                             if cell.nb_off >= unit_to_send(match,cell,c):
                                 orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,unit_to_send(match,cell,c))})
                                 cell.unit_needed += unit_to_send(match,cell,c)
-                                c.unit_needed = 0
-                            elif cell.nb_off < unit_to_send(match,cell,c) and len(neighbour_foe(match,cell))>0:
-                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off//len(neighbour_foe(match,cell)))})
-                                
-                                
+                            elif cell.nb_off < unit_to_send(match,cell,c) and len(neighbour_foe)>0:
+                                orders.append({"from": cell.id, "to": c.id, "percent": to_percent(cell,cell.nb_off//len(neighbour_foe))})
+                                cell.unit_needed += cell.nb_off//len(neighbour_foe)
     return orders
 
 
